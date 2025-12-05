@@ -15,9 +15,9 @@
     --acid: #CCFF00;   /* Acid Green (Highlights) */
     
     /* Typography Tokens */
-    --font-titles: 'Inter', sans-serif;       /* Títulos: Limpio/Moderno */
-    --font-body:   'IBM Plex Serif', serif;   /* Cuerpo/Datos: Técnico/Editorial */
-    --font-serif:  'Lora', serif;             /* Editorial: Narrativo */
+    --font-titles: 'DM Mono', monospace;      /* Títulos: Técnico / Raw */
+    --font-body:   'DM Sans', sans-serif;     /* Cuerpo: Limpio / Geométrico */
+    --font-serif:  'Lora', serif;             /* Editorial: Acento Humano */
 }
 
 /* === RESET & BASE === */
@@ -26,7 +26,7 @@
 body {
     background-color: var(--bg);
     color: var(--ink);
-    font-family: var(--font-body); /* AHORA: IBM Plex Serif */
+    font-family: var(--font-body); /* Ahora usa DM Sans */
     line-height: 1.5;
     overflow-x: hidden;
     background-image: radial-gradient(#D6D6D6 1px, transparent 1px);
@@ -48,30 +48,33 @@ h1, h2, h3, h4,
 .p-title,
 .hero-title,
 .logo,
-.nav-link { 
-    font-family: var(--font-titles); /* INTER: Se mantiene para estructura */
-    font-weight: 400; 
-    letter-spacing: -0.02em; 
+.nav-link,
+.mono,          /* Tags y etiquetas */
+.meta-block div, 
+.dp-label, 
+.metric-num { 
+    font-family: var(--font-titles); /* Todo esto ahora es DM Mono */
+    letter-spacing: -0.03em; /* Las monoespaciadas en títulos suelen necesitar un tracking más cerrado */
+}
+
+/* Ajuste fino para DM Mono en títulos grandes para que no se vea tan separado */
+h1, .display-title, .hero-title {
+    letter-spacing: -0.04em; 
+    font-weight: 500; /* Un poco más de peso para que la línea fina de la mono no se pierda */
 }
 
 /* === UTILITY CLASSES (REFACTORED) === */
 
-/* .mono ahora usa IBM Plex Serif pero mantiene el estilo "técnico" */
-.mono, .meta-block div, .dp-label, .metric-num { 
-    font-family: var(--font-body);
-    font-feature-settings: "tnum" on; /* Números tabulares para alineación perfecta */
-    font-size: 11px; 
-    text-transform: uppercase; 
-    letter-spacing: 0.05em; 
-}
 
 .highlight-lora, .editorial-quote, .serif { 
     font-family: var(--font-serif); 
 }
 
-.highlight-lora {
-    font-weight: 700;
-    font-style: italic;
+/* Ajuste para Lora (Editorial) */
+.highlight-lora, .editorial-quote strong {
+    font-family: var(--font-serif);
+    font-weight: 700; /* Bold */
+    font-style: italic; /* Italic */
 }
 
 .text-gray { color: var(--gray); }
@@ -84,7 +87,7 @@ h1, h2, h3, h4,
     transition: transform 1s cubic-bezier(0.83, 0, 0.17, 1);
 }
 .loader-content { 
-    font-family: var(--font-body); /* Usamos la serif técnica aquí también */
+    font-family: var(--font-body); /* Usamos DM Sans aquí también */
     color: var(--acid); 
     font-size: 10vw; 
     line-height: 1; 
@@ -244,7 +247,7 @@ header {
 }
 
 .quote-symbol {
-    font-family: var(--font-body); /* Serif técnica para el símbolo */
+    font-family: var(--font-body); /* DM Sans para el símbolo */
     font-size: 4rem; color: var(--accent); opacity: 0.3;
     line-height: 0; position: absolute; top: 48px; left: 32px;
 }
@@ -255,7 +258,7 @@ header {
 }
 
 .editorial-sub {
-    font-family: var(--font-body); /* Cuerpo en IBM Plex Serif */
+    font-family: var(--font-body); /* Cuerpo en DM Sans */
     color: var(--gray); font-size: 1rem; line-height: 1.6; max-width: 90%;
 }
 
@@ -272,7 +275,7 @@ footer {
 }
 
 .email-big { 
-    font-family: var(--font-titles); /* INTER para el CTA grande */
+    font-family: var(--font-titles); /* DM Mono para el CTA grande */
     font-size: clamp(32px, 6vw, 64px); font-weight: 300; 
     letter-spacing: -0.04em; line-height: 1; position: relative; 
 }
