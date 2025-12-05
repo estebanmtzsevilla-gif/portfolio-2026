@@ -41,40 +41,32 @@ img, video { max-width: 100%; display: block; }
 
 ::selection { background: var(--accent); color: var(--surface); }
 
-/* === TYPOGRAPHY HIERARCHY === */
+/* === TYPOGRAPHY HIERARCHY (AJUSTE DE PESOS) === */
+
+/* 1. Títulos en DM Mono: FINOS (Weight 300) 
+   La jerarquía ahora la da el tamaño, no el grosor. */
 h1, h2, h3, h4, 
 .display-title, 
 .section-title, 
-.p-title,
 .hero-title,
-.logo,
-.nav-link,
-.mono,          /* Tags y etiquetas */
-.meta-block div, 
-.dp-label, 
-.metric-num { 
-    font-family: var(--font-titles); /* Todo esto ahora es DM Mono */
-    letter-spacing: -0.03em; /* Las monoespaciadas en títulos suelen necesitar un tracking más cerrado */
+.p-title { 
+    font-family: var(--font-titles);
+    font-weight: 300; /* CLAVE: Usamos el peso Light */
+    letter-spacing: -0.03em; /* Tracking cerrado para look técnico */
 }
 
-/* Ajuste fino para DM Mono en títulos grandes para que no se vea tan separado */
-h1, .display-title, .hero-title {
-    letter-spacing: -0.04em; 
-    font-weight: 500; /* Un poco más de peso para que la línea fina de la mono no se pierda */
+/* Etiquetas pequeñas y UI: Un poco más de peso para legibilidad */
+.nav-link, .logo, .mono, .meta-block div, .dp-label, .metric-num {
+    font-family: var(--font-titles);
+    font-weight: 400; /* Regular para textos pequeños */
+    letter-spacing: 0.02em;
 }
 
 /* === UTILITY CLASSES (REFACTORED) === */
 
 
-.highlight-lora, .editorial-quote, .serif { 
+.highlight-lora, .serif { 
     font-family: var(--font-serif); 
-}
-
-/* Ajuste para Lora (Editorial) */
-.highlight-lora, .editorial-quote strong {
-    font-family: var(--font-serif);
-    font-weight: 700; /* Bold */
-    font-style: italic; /* Italic */
 }
 
 .text-gray { color: var(--gray); }
@@ -247,19 +239,44 @@ header {
 }
 
 .quote-symbol {
-    font-family: var(--font-body); /* DM Sans para el símbolo */
     font-size: 4rem; color: var(--accent); opacity: 0.3;
     line-height: 0; position: absolute; top: 48px; left: 32px;
 }
 
+.quote-symbol.mono {
+    font-family: var(--font-titles); /* DM Mono cuando tiene clase mono */
+}
+
+/* === PHILOSOPHY SECTION FIX === */
+
+/* Corregimos: La cita principal ahora usa la fuente del cuerpo (DM Sans), no Lora */
 .editorial-quote {
-    font-size: clamp(1.5rem, 2.5vw, 2rem); line-height: 1.4;
-    color: var(--ink); position: relative; z-index: 2; margin-bottom: 24px;
+    font-family: var(--font-body); /* Antes era var(--font-serif) */
+    font-weight: 300;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    line-height: 1.4;
+    color: var(--ink);
+    position: relative;
+    z-index: 2;
+    margin-bottom: 24px;
+}
+
+/* Solo las negritas o spans específicos usan Lora Italica */
+.editorial-quote strong, 
+.highlight-lora {
+    font-family: var(--font-serif);
+    font-weight: 600; /* Bold */
+    font-style: italic;
+    color: var(--ink); /* Opcional: Si quieres que resalte más, podrías usar --accent */
 }
 
 .editorial-sub {
-    font-family: var(--font-body); /* Cuerpo en DM Sans */
-    color: var(--gray); font-size: 1rem; line-height: 1.6; max-width: 90%;
+    font-family: var(--font-body); /* DM Sans */
+    color: var(--gray);
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 90%;
 }
 
 .data-strip {
