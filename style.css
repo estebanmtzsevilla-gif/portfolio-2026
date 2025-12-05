@@ -1,0 +1,294 @@
+/* ============================================
+   PORTFOLIO STYLES - HOMOLOGATED
+   ============================================ */
+
+/* === ROOT VARIABLES === */
+:root {
+    /* Color Palette */
+    --bg: #F2F2F2;
+    --surface: #FFFFFF;
+    --ink: #111111;
+    --gray: #666666;
+    --line: #D6D6D6;
+    --accent: #1037F6; /* Blue (Sistemas) */
+    --warm: #F0845A;   /* Orange (Núcleo/Humano) */
+    --acid: #CCFF00;   /* Acid Green (Highlights) */
+    
+    /* Typography Tokens */
+    --font-titles: 'Inter', sans-serif;       /* Títulos: Limpio/Moderno */
+    --font-body:   'IBM Plex Serif', serif;   /* Cuerpo/Datos: Técnico/Editorial */
+    --font-serif:  'Lora', serif;             /* Editorial: Narrativo */
+}
+
+/* === RESET & BASE === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body); /* AHORA: IBM Plex Serif */
+    line-height: 1.5;
+    overflow-x: hidden;
+    background-image: radial-gradient(#D6D6D6 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+body.loading { overflow: hidden; }
+body.modal-open { overflow: hidden; }
+
+a { text-decoration: none; color: inherit; cursor: pointer; }
+img, video { max-width: 100%; display: block; }
+
+::selection { background: var(--accent); color: var(--surface); }
+
+/* === TYPOGRAPHY HIERARCHY === */
+h1, h2, h3, h4, 
+.display-title, 
+.section-title, 
+.p-title,
+.hero-title,
+.logo,
+.nav-link { 
+    font-family: var(--font-titles); /* INTER: Se mantiene para estructura */
+    font-weight: 400; 
+    letter-spacing: -0.02em; 
+}
+
+/* === UTILITY CLASSES (REFACTORED) === */
+
+/* .mono ahora usa IBM Plex Serif pero mantiene el estilo "técnico" */
+.mono, .meta-block div, .dp-label, .metric-num { 
+    font-family: var(--font-body);
+    font-feature-settings: "tnum" on; /* Números tabulares para alineación perfecta */
+    font-size: 11px; 
+    text-transform: uppercase; 
+    letter-spacing: 0.05em; 
+}
+
+.highlight-lora, .editorial-quote, .serif { 
+    font-family: var(--font-serif); 
+}
+
+.highlight-lora {
+    font-weight: 700;
+    font-style: italic;
+}
+
+.text-gray { color: var(--gray); }
+
+/* === PRELOADER (Migrado del HTML) === */
+.preloader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--ink); z-index: 10000;
+    display: flex; justify-content: flex-end; align-items: flex-end; padding: 40px;
+    transition: transform 1s cubic-bezier(0.83, 0, 0.17, 1);
+}
+.loader-content { 
+    font-family: var(--font-body); /* Usamos la serif técnica aquí también */
+    color: var(--acid); 
+    font-size: 10vw; 
+    line-height: 1; 
+}
+body.loaded .preloader { transform: translateY(-100%); }
+
+/* === CUSTOM CURSOR (Migrado del HTML) === */
+.cursor-dot {
+    width: 12px; height: 12px; background-color: var(--ink);
+    border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001;
+    transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s;
+    mix-blend-mode: normal;
+}
+body.hovering .cursor-dot { 
+    width: 80px; height: 80px; 
+    background-color: var(--acid); 
+    mix-blend-mode: multiply; 
+    border: none; /* Reset del borde anterior */
+}
+
+/* === SYSTEM BACKGROUND VISUAL (Migrado del HTML) === */
+.system-background {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none; overflow: hidden;
+}
+
+.system-background .solar-system {
+    position: absolute;
+    top: 50%; right: 100px; 
+    width: 0; height: 0;
+    transform: translateY(-50%) rotate(-25deg);
+    transform-style: flat;
+}
+
+.system-background .core {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: var(--acid);
+}
+
+.system-background .orbit {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 50%;
+}
+
+.system-background .o1 { width: 500px; height: 300px; }
+.system-background .o2 { width: 900px; height: 550px; }
+.system-background .o3 { width: 1400px; height: 850px; }
+
+.system-background .planet {
+    position: absolute; border-radius: 50%;
+    background-color: var(--ink);
+    offset-anchor: center;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.system-background .p1 { 
+    width: 30px; height: 30px; 
+    offset-path: ellipse(250px 150px at 50% 50%);
+    animation-name: travel; animation-duration: 8s; 
+}
+.system-background .p2 { 
+    width: 60px; height: 60px; 
+    offset-path: ellipse(450px 275px at 50% 50%);
+    animation-name: travel-reverse; animation-duration: 15s; 
+}
+.system-background .p3 { 
+    width: 15px; height: 15px; 
+    offset-path: ellipse(700px 425px at 50% 50%);
+    animation-name: travel; animation-duration: 25s; 
+}
+
+@keyframes travel { to { offset-distance: 100%; } }
+@keyframes travel-reverse { to { offset-distance: -100%; } }
+
+/* === LAYOUT & SECTIONS === */
+.container { 
+    max-width: 1200px; margin: 0 auto; padding: 0 40px; 
+    border-left: 1px solid var(--line); border-right: 1px solid var(--line); 
+    background: var(--bg); min-height: 100vh; position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.05); overflow-x: hidden;
+}
+
+header {
+    padding: 40px 0; margin-bottom: 60px; 
+    border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(242,242,242,0.95); backdrop-filter: blur(5px);
+    position: sticky; top: 0; z-index: 100;
+}
+
+.nav-links { display: flex; gap: 32px; }
+.nav-link { color: var(--gray); transition: color 0.2s; }
+.nav-link:hover { color: var(--accent); }
+
+/* Hero Section */
+.hero { 
+    padding: 60px 0 160px; 
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+    border-bottom: 1px solid var(--line); position: relative;
+}
+
+.statement-label {
+    display: block; color: var(--accent); 
+    margin-bottom: 24px; padding-bottom: 12px; 
+    border-bottom: 1px solid var(--ink); width: 100%;
+}
+
+.hero-content h1 {
+    font-size: clamp(24px, 4vw, 32px); line-height: 1.4;
+    margin-bottom: 40px; max-width: 480px;
+}
+
+.hero-meta { display: flex; gap: 40px; margin-top: 60px; }
+.meta-block span { display: block; color: var(--accent); margin-bottom: 4px; }
+.meta-block div { color: var(--ink); }
+
+.hero-visual {
+    position: relative; display: flex; 
+    align-items: center; justify-content: center; min-height: 500px;
+}
+
+/* Work Section */
+.work-section { padding: 120px 0; }
+.section-label { 
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 40px; padding-bottom: 12px; border-bottom: 2px solid var(--ink);
+}
+
+.project-row {
+    display: grid; grid-template-columns: 0.5fr 2fr 1fr auto; 
+    gap: 24px; padding: 32px 0; border-bottom: 1px solid var(--line);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    align-items: center; cursor: pointer;
+}
+.project-row:hover { padding-left: 24px; background: var(--surface); }
+.project-row:hover .p-title, .project-row:hover .p-arrow { color: var(--accent); }
+.project-row:hover .p-arrow { transform: translateX(10px); }
+
+.p-title { font-size: 28px; }
+.p-id, .p-tags { color: var(--gray); }
+.p-arrow { transition: transform 0.3s; font-size: 20px; }
+
+/* About Section */
+.about-section { padding: 120px 0; border-top: 1px solid var(--line); }
+.philosophy-container { max-width: 900px; margin: 0 auto; }
+
+.philosophy-card {
+    background: var(--surface); border: 1px solid var(--line);
+    padding: 64px 48px; position: relative; 
+    box-shadow: 12px 12px 0 rgba(16, 55, 246, 0.1); margin-bottom: 40px;
+}
+
+.quote-symbol {
+    font-family: var(--font-body); /* Serif técnica para el símbolo */
+    font-size: 4rem; color: var(--accent); opacity: 0.3;
+    line-height: 0; position: absolute; top: 48px; left: 32px;
+}
+
+.editorial-quote {
+    font-size: clamp(1.5rem, 2.5vw, 2rem); line-height: 1.4;
+    color: var(--ink); position: relative; z-index: 2; margin-bottom: 24px;
+}
+
+.editorial-sub {
+    font-family: var(--font-body); /* Cuerpo en IBM Plex Serif */
+    color: var(--gray); font-size: 1rem; line-height: 1.6; max-width: 90%;
+}
+
+.data-strip {
+    display: flex; justify-content: space-between; 
+    border-top: 1px solid var(--line); padding-top: 24px; flex-wrap: wrap; gap: 24px;
+}
+.dp-value { font-size: 1rem; font-weight: 600; color: var(--ink); }
+
+/* Footer */
+footer { 
+    padding: 80px 0; border-top: 2px solid var(--ink); 
+    display: flex; justify-content: space-between; align-items: flex-end; 
+}
+
+.email-big { 
+    font-family: var(--font-titles); /* INTER para el CTA grande */
+    font-size: clamp(32px, 6vw, 64px); font-weight: 300; 
+    letter-spacing: -0.04em; line-height: 1; position: relative; 
+}
+.email-big:hover { color: var(--accent); }
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .container { padding: 0 20px; }
+    .hero { grid-template-columns: 1fr; gap: 40px; padding: 40px 0 60px; }
+    .hero-content { order: 1; }
+    .hero-visual { height: 300px; order: 2; margin: 0; }
+    .system-background .solar-system { right: -20%; transform: translateY(-50%) rotate(-25deg) scale(0.6); }
+    
+    .project-row { grid-template-columns: 1fr auto; gap: 8px; }
+    .p-tags, .p-id { display: none; }
+    
+    .data-strip { display: grid; grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; align-items: flex-start; gap: 40px; }
+}
