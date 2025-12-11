@@ -89,14 +89,51 @@
             border: 1px solid rgba(0,0,0,0.08) !important; /* Línea sutil */
             border-radius: 50% !important;
             transform-style: flat !important;
-            animation: none !important;
             opacity: 1 !important;
+            transform-origin: center center !important;
         }
 
         /* Tamaños de las elipses - Mayor especificidad - Escalados para cubrir más área */
-        .system-background .o1 { width: 800px !important; height: 500px !important; border-color: rgba(0,0,0,0.15) !important; border-style: solid !important; opacity: 1 !important; }
-        .system-background .o2 { width: 1400px !important; height: 850px !important; border-color: rgba(0,0,0,0.12) !important; border-style: solid !important; opacity: 1 !important; }
-        .system-background .o3 { width: 2000px !important; height: 1200px !important; border-color: rgba(0,0,0,0.1) !important; border-style: solid !important; opacity: 1 !important; }
+        .system-background .o1 { 
+            width: 800px !important; 
+            height: 500px !important; 
+            border-color: rgba(0,0,0,0.15) !important; 
+            border-style: solid !important; 
+            opacity: 1 !important;
+            animation: orbit-rotate-1 120s linear infinite !important;
+        }
+        .system-background .o2 { 
+            width: 1400px !important; 
+            height: 850px !important; 
+            border-color: rgba(0,0,0,0.12) !important; 
+            border-style: solid !important; 
+            opacity: 1 !important;
+            animation: orbit-rotate-2 180s linear infinite reverse !important;
+        }
+        .system-background .o3 { 
+            width: 2000px !important; 
+            height: 1200px !important; 
+            border-color: rgba(0,0,0,0.1) !important; 
+            border-style: solid !important; 
+            opacity: 1 !important;
+            animation: orbit-rotate-3 240s linear infinite !important;
+        }
+        
+        /* Animaciones de rotación suave para las órbitas */
+        @keyframes orbit-rotate-1 {
+            from { transform: translate(-50%, -50%) rotate(0deg) !important; }
+            to { transform: translate(-50%, -50%) rotate(360deg) !important; }
+        }
+        
+        @keyframes orbit-rotate-2 {
+            from { transform: translate(-50%, -50%) rotate(0deg) !important; }
+            to { transform: translate(-50%, -50%) rotate(-360deg) !important; }
+        }
+        
+        @keyframes orbit-rotate-3 {
+            from { transform: translate(-50%, -50%) rotate(0deg) !important; }
+            to { transform: translate(-50%, -50%) rotate(360deg) !important; }
+        }
 
         /* Estilos base de los planetas - Mayor especificidad */
         .system-background .planet {
@@ -113,7 +150,7 @@
 
         /* ANIMACIONES Y TRAYECTORIAS - Mayor especificidad */
         
-        /* Planeta 1: Pequeño y Rápido (8s) - Ajustado para nuevas órbitas */
+        /* Planeta 1: Pequeño y Rápido - Velocidad más natural */
         .system-background .p1 { 
             width: 40px !important; 
             height: 40px !important; 
@@ -122,11 +159,12 @@
             /* La ruta debe coincidir con la mitad del tamaño de su órbita .o1 */
             offset-path: ellipse(400px 250px at 50% 50%) !important;
             animation-name: travel !important;
-            animation-duration: 10s !important; 
+            animation-duration: 12s !important;
+            animation-timing-function: linear !important;
             transform: none !important;
         }
 
-        /* Planeta 2: Mediano y Contrarrotación (15s) - Ajustado para nuevas órbitas */
+        /* Planeta 2: Mediano y Contrarrotación - Velocidad media */
         .system-background .p2 { 
             width: 80px !important; 
             height: 80px !important; 
@@ -134,11 +172,12 @@
             left: auto !important;
             offset-path: ellipse(700px 425px at 50% 50%) !important;
             animation-name: travel-reverse !important;
-            animation-duration: 18s !important;
+            animation-duration: 20s !important;
+            animation-timing-function: linear !important;
             transform: none !important;
         }
 
-        /* Planeta 3: Pequeño y Lento (25s) - Ajustado para nuevas órbitas */
+        /* Planeta 3: Pequeño y Lento - Crear profundidad */
         .system-background .p3 { 
             width: 20px !important; 
             height: 20px !important; 
@@ -146,7 +185,8 @@
             left: auto !important;
             offset-path: ellipse(1000px 600px at 50% 50%) !important;
             animation-name: travel !important;
-            animation-duration: 30s !important;
+            animation-duration: 35s !important;
+            animation-timing-function: linear !important;
             transform: none !important;
         }
 
@@ -360,23 +400,36 @@
             let currentX = 0;
             let currentY = 0;
 
+            // Scroll parallax variables
+            let scrollProgress = 0;
+
             const updateParallax = () => {
-                // Smooth interpolation
-                currentX += (targetX - currentX) * 0.05;
-                currentY += (targetY - currentY) * 0.05;
+                // Smooth interpolation - más suave como CIRCUS
+                currentX += (targetX - currentX) * 0.03;
+                currentY += (targetY - currentY) * 0.03;
 
-                // Apply parallax effect
-                const rotateX = currentY * 0.02;
-                const rotateY = currentX * 0.02;
-                const translateX = currentX * 0.5;
-                const translateY = currentY * 0.5;
+                // Calcular scroll progress
+                const heroRect = hero.getBoundingClientRect();
+                const heroTop = heroRect.top;
+                const heroHeight = heroRect.height;
+                
+                if (heroTop < window.innerHeight && heroTop + heroHeight > 0) {
+                    scrollProgress = Math.max(0, Math.min(1, -heroTop / heroHeight));
+                }
 
-                solarSystem.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) rotate(-15deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.9)`;
+                // Apply parallax effect - más sutil y elegante, combinando mouse y scroll
+                const rotateX = currentY * 0.015; // Reducido para ser más sutil
+                const rotateY = currentX * 0.015;
+                const translateX = currentX * 0.3; // Reducido para movimiento más sutil
+                const translateY = currentY * 0.3 + (scrollProgress * 20); // Combinado con scroll
+                const scale = 0.9 - (scrollProgress * 0.02);
 
-                // Core subtle movement
+                solarSystem.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) rotate(-15deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+
+                // Core subtle movement - muy ligero
                 if (core) {
-                    const coreX = currentX * 0.1;
-                    const coreY = currentY * 0.1;
+                    const coreX = currentX * 0.05;
+                    const coreY = currentY * 0.05;
                     core.style.transform = `translate(calc(-50% + ${coreX}px), calc(-50% + ${coreY}px))`;
                 }
 
@@ -388,9 +441,9 @@
                 const centerX = rect.left + rect.width / 2;
                 const centerY = rect.top + rect.height / 2;
                 
-                // Calculate relative position from center (-1 to 1)
-                targetX = (e.clientX - centerX) / (rect.width / 2);
-                targetY = (e.clientY - centerY) / (rect.height / 2);
+                // Calculate relative position from center (-1 to 1) - más suave
+                targetX = ((e.clientX - centerX) / (rect.width / 2)) * 0.6;
+                targetY = ((e.clientY - centerY) / (rect.height / 2)) * 0.6;
             });
 
             hero.addEventListener('mouseleave', () => {
@@ -400,20 +453,6 @@
 
             // Start parallax loop
             updateParallax();
-
-            // Scroll parallax effect
-            let lastScroll = 0;
-            window.addEventListener('scroll', () => {
-                const scrollY = window.scrollY;
-                const heroHeight = hero.offsetHeight;
-                const scrollProgress = Math.min(scrollY / heroHeight, 1);
-                
-                // Subtle scroll-based movement
-                const scrollOffset = scrollProgress * 50;
-                solarSystem.style.transform = `translate(calc(-50% + ${currentX * 0.5}px), calc(-50% + ${currentY * 0.5 + scrollOffset}px)) rotate(-15deg) rotateX(${currentY * 0.02}deg) rotateY(${currentX * 0.02}deg) scale(${0.9 - scrollProgress * 0.05})`;
-                
-                lastScroll = scrollY;
-            });
         }
     </script>
 </body>
