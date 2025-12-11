@@ -228,13 +228,18 @@ body.modal-open .cursor-dot {
 
 /* Hero Section */
 .hero { 
-    padding: 0 0 120px; 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 100px;
+    padding: 120px 0 180px; 
     position: relative;
-    overflow: visible;
+    overflow: hidden;
+    min-height: 80vh;
+    display: flex;
     align-items: center;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 800px;
 }
 
 .statement-label {
@@ -293,17 +298,7 @@ body.modal-open .cursor-dot {
     font-weight: 400;
 }
 
-/* Hero Visual: Solar System - OLD STYLES COMMENTED OUT */
-/* New solar system styles are now in index.html */
-.hero-visual {
-    position: relative; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    perspective: 1000px;
-    min-height: 500px;
-    overflow: visible; /* Permite que el sistema solar se extienda */
-}
+/* Hero Visual styles removed - system is now background */
 
 /* Old solar system styles - commented out to avoid conflicts with new system */
 /*
@@ -1480,9 +1475,12 @@ footer.main-footer {
     
     /* Index */
     .hero { 
-        grid-template-columns: 1fr; 
-        padding: 0 0 80px;
-        gap: 60px;
+        padding: 80px 0 120px;
+        min-height: 70vh;
+    }
+    
+    .hero-content {
+        max-width: 100%;
     }
     
     .hero-content {
@@ -1532,13 +1530,6 @@ footer.main-footer {
         gap: 32px;
     }
     
-    .hero-visual { 
-        height: 300px; 
-        margin: 0; 
-        border-left: none; 
-        border-top: 1px solid var(--line); 
-        order: 2; 
-    }
     
     .about-grid, 
     .timeline-visual { 
