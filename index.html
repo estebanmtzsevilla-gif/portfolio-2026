@@ -48,7 +48,7 @@
             height: 100%;
             z-index: 0; /* Detrás del contenido */
             pointer-events: none; /* Deja pasar los clicks */
-            overflow: hidden; /* Respeta el contenedor */
+            overflow: visible; /* Permite que las órbitas se vean completas */
         }
 
         /* Geometría General del Sistema - Mayor especificidad para sobrescribir CSS externo */
@@ -102,7 +102,7 @@
         .system-background .planet {
             position: absolute !important;
             border-radius: 50% !important;
-            background-color: var(--ink) !important;
+            background-color: #555555 !important; /* Gris oscuro */
             opacity: 1 !important;
             offset-anchor: center !important; /* Centra el planeta en la línea */
             animation-timing-function: linear !important;

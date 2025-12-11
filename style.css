@@ -230,7 +230,7 @@ body.modal-open .cursor-dot {
 .hero { 
     padding: 120px 0 180px; 
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     min-height: 80vh;
     display: flex;
     align-items: center;
