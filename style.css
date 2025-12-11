@@ -31,10 +31,10 @@ body {
     color: var(--ink);
     font-family: var(--font-main); /* Ahora es Manrope */
     font-weight: 400; /* Manrope Regular */
-    line-height: 1.5;
+    line-height: 1.6;
     overflow-x: hidden;
-    background-image: radial-gradient(#D6D6D6 1px, transparent 1px);
-    background-size: 40px 40px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body.modal-open { 
@@ -119,52 +119,80 @@ h1, h2, h3, h4 {
 
 /* === CONTAINER === */
 .container { 
-    max-width: 1200px; 
+    max-width: 1400px; 
     margin: 0 auto; 
-    padding: 0 40px; 
-    border-left: 1px solid var(--line); 
-    border-right: 1px solid var(--line); 
+    padding: 0 60px; 
     background: var(--bg); 
     min-height: 100vh; 
     position: relative;
-    box-shadow: 0 0 50px rgba(0,0,0,0.05);
     overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 24px;
+    }
 }
 
 /* === HEADER === */
 header {
-    padding: 40px 0; 
-    margin-bottom: 60px; 
-    border-bottom: 1px solid var(--line);
+    padding: 32px 0; 
+    margin-bottom: 80px; 
     display: flex; 
     justify-content: space-between; 
     align-items: center;
-    background: rgba(242,242,242,0.95); 
-    backdrop-filter: blur(5px);
-    position: sticky; 
-    top: 0; 
-    z-index: 100;
+    background: transparent;
+    position: relative;
 }
 
 .logo { 
     font-weight: 600; 
-    font-size: 14px; 
+    font-size: 13px; 
     letter-spacing: 0.02em; 
+    color: var(--ink);
 }
 
 .nav-links { 
     display: flex; 
-    gap: 32px; 
+    gap: 48px; 
 }
 
 .nav-link { 
-    color: var(--gray); 
-    transition: color 0.2s; 
-    position: relative; 
+    color: var(--ink); 
+    transition: color 0.3s ease; 
+    position: relative;
+    font-weight: 400;
+    font-size: 14px;
 }
 
 .nav-link:hover { 
     color: var(--accent); 
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.contact-link {
+    color: var(--ink);
+    transition: color 0.3s ease;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.contact-link:hover {
+    color: var(--accent);
 }
 
 /* === CUSTOM CURSOR === */
@@ -200,37 +228,37 @@ body.modal-open .cursor-dot {
 
 /* Hero Section */
 .hero { 
-    padding: 60px 0 160px; 
+    padding: 0 0 120px; 
     display: grid; 
     grid-template-columns: 1fr 1fr; 
-    gap: 60px;
-    border-bottom: 1px solid var(--line); 
+    gap: 100px;
     position: relative;
-    overflow: visible; /* Permite que el sistema solar se extienda */
+    overflow: visible;
+    align-items: center;
 }
 
 .statement-label {
     display: block; 
-    color: var(--accent); 
-    margin-bottom: 24px;
-    padding-bottom: 12px; 
-    border-bottom: 1px solid var(--ink); 
+    color: var(--gray); 
+    margin-bottom: 32px;
     width: 100%;
     max-width: 100%;
     word-wrap: break-word;
     overflow-wrap: break-word;
     box-sizing: border-box;
+    font-weight: 600;
+    font-size: 11px;
 }
 
 .hero-content h1 {
     font-family: var(--font-display);
-    font-size: clamp(32px, 5vw, 48px); /* Un pelín más grande */
-    font-weight: 600; 
-    line-height: 1.2;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 400; 
+    line-height: 1.1;
     color: var(--ink);
-    letter-spacing: -0.01em; 
-    margin-bottom: 40px;
-    max-width: 480px;
+    letter-spacing: -0.03em; 
+    margin-bottom: 48px;
+    max-width: 680px;
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
@@ -245,18 +273,24 @@ body.modal-open .cursor-dot {
 
 .hero-meta {
     display: flex; 
-    gap: 40px; 
-    margin-top: 60px; 
+    gap: 64px; 
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(0,0,0,0.08);
 }
 
 .meta-block span { 
     display: block; 
-    color: var(--accent); 
-    margin-bottom: 4px; 
+    color: var(--gray); 
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
 }
 
 .meta-block div { 
-    font-size: 13px; 
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 400;
 }
 
 /* Hero Visual: Solar System - OLD STYLES COMMENTED OUT */
@@ -399,33 +433,34 @@ body.modal-open .cursor-dot {
 
 /* Work Section */
 .work-section { 
-    padding: 120px 0; 
+    padding: 140px 0; 
 }
 
 .section-label { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    margin-bottom: 40px; 
-    padding-bottom: 12px; 
-    border-bottom: 2px solid var(--ink);
+    display: block;
+    margin-bottom: 64px; 
+    color: var(--gray);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .project-row {
     display: grid; 
     grid-template-columns: 0.5fr 2fr 1fr auto; 
-    gap: 24px; 
-    padding: 32px 0; 
-    border-bottom: 1px solid var(--line);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    gap: 32px; 
+    padding: 40px 0; 
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative; 
     cursor: pointer; 
     align-items: center;
 }
 
 .project-row:hover { 
-    padding-left: 24px; 
-    background: var(--surface); 
+    padding-left: 16px; 
+    background: transparent;
 }
 
 .project-row:hover .p-title { 
@@ -433,18 +468,22 @@ body.modal-open .cursor-dot {
 }
 
 .project-row:hover .p-arrow { 
-    transform: translateX(10px); 
+    transform: translateX(8px); 
     color: var(--accent); 
 }
 
 .p-title { 
-    font-size: 28px; 
+    font-size: clamp(24px, 3vw, 32px);
     font-weight: 400; 
-    letter-spacing: -0.02em; 
+    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+    line-height: 1.3;
+    transition: color 0.3s ease;
 }
 
 .p-id, .p-tags { 
-    color: var(--gray); 
+    color: var(--gray);
+    font-size: 12px;
 }
 
 /* Para los números grandes en las métricas (si los tienes) */
@@ -454,8 +493,9 @@ body.modal-open .cursor-dot {
 }
 
 .p-arrow { 
-    transition: transform 0.3s; 
-    font-size: 20px; 
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+    font-size: 20px;
+    color: var(--gray);
 }
 
 /* Hover Reveal - Disabled for now, can be re-enabled later */
@@ -482,49 +522,55 @@ body.modal-open .cursor-dot {
 
 /* About Section */
 .about-section { 
-    padding: 120px 0; 
-    border-top: 1px solid var(--line); 
+    padding: 140px 0; 
 }
 
 /* Philosophy Section Styles */
 .philosophy-container {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
 .philosophy-card {
     background: var(--surface);
-    border: 1px solid var(--line);
-    padding: 64px 48px;
+    border: 1px solid rgba(0,0,0,0.08);
+    padding: 80px 64px;
     position: relative;
-    box-shadow: 12px 12px 0 rgba(16, 55, 246, 0.1);
-    margin-bottom: 40px;
+    margin-bottom: 48px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.philosophy-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.06);
 }
 
 .quote-symbol {
     font-family: var(--font-tech);
-    font-size: 4rem;
+    font-size: 5rem;
     color: var(--accent);
-    opacity: 0.3;
+    opacity: 0.15;
     line-height: 0;
     position: absolute;
     top: 48px;
-    left: 32px;
+    left: 48px;
 }
 
 .editorial-quote {
     font-family: var(--font-display);
-    font-size: clamp(1.5rem, 2.5vw, 2rem);
-    line-height: 1.4;
+    font-size: clamp(28px, 3.5vw, 40px);
+    line-height: 1.3;
     color: var(--ink);
     position: relative;
     z-index: 2;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
 }
 
 .editorial-quote strong {
     font-weight: 500;
-    background: linear-gradient(180deg, transparent 65%, rgba(16, 55, 246, 0.15) 65%);
+    background: linear-gradient(180deg, transparent 70%, rgba(16, 55, 246, 0.12) 70%);
 }
 
 .editorial-sub {
@@ -538,10 +584,10 @@ body.modal-open .cursor-dot {
 .data-strip {
     display: flex;
     justify-content: space-between;
-    border-top: 1px solid var(--line);
-    padding-top: 24px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding-top: 40px;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 48px;
 }
 
 .data-point {
@@ -551,18 +597,21 @@ body.modal-open .cursor-dot {
 
 .dp-label {
     font-family: var(--font-tech);
-    font-size: 0.7rem;
+    font-size: 11px;
     text-transform: uppercase;
     color: var(--gray);
-    margin-bottom: 6px;
-    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+    letter-spacing: 0.1em;
+    font-weight: 600;
 }
 
 .dp-value {
-    font-family: var(--font-main);
-    font-size: 1rem;
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3vw, 36px);
+    font-weight: 400;
     color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
 }
 
 /* Journey Section */
@@ -615,38 +664,48 @@ body.modal-open .cursor-dot {
 
 /* === FOOTER === */
 footer { 
-    padding: 80px 0; 
-    border-top: 2px solid var(--ink); 
+    padding: 120px 0 80px; 
+    border-top: 1px solid rgba(0,0,0,0.08); 
     display: flex; 
     justify-content: space-between; 
-    align-items: flex-end; 
+    align-items: flex-end;
+    gap: 40px;
+}
+
+footer .mono {
+    color: var(--gray);
+    font-size: 11px;
+    line-height: 1.8;
 }
 
 footer.main-footer { 
-    padding: 80px 0; 
-    border-top: 2px solid var(--ink); 
+    padding: 120px 0 80px; 
+    border-top: 1px solid rgba(0,0,0,0.08); 
     display: flex; 
     justify-content: space-between; 
-    align-items: flex-end; 
+    align-items: flex-end;
+    gap: 40px;
 }
 
 .email-big { 
-    font-size: clamp(32px, 6vw, 64px); 
-    font-weight: 300; 
-    letter-spacing: -0.04em; 
-    line-height: 1; 
-    position: relative; 
+    font-size: clamp(36px, 5vw, 56px); 
+    font-weight: 400;
+    font-family: var(--font-display);
+    letter-spacing: -0.03em; 
+    line-height: 1.1; 
+    position: relative;
+    transition: color 0.3s ease;
 }
 
 .email-big::after { 
     content: ''; 
     position: absolute; 
     left: 0; 
-    bottom: 0; 
+    bottom: 4px; 
     width: 0%; 
     height: 2px; 
     background: var(--accent); 
-    transition: width 0.3s ease; 
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
 }
 
 .email-big:hover::after { 
@@ -1422,8 +1481,8 @@ footer.main-footer {
     /* Index */
     .hero { 
         grid-template-columns: 1fr; 
-        padding: 40px 0 60px;
-        gap: 40px;
+        padding: 0 0 80px;
+        gap: 60px;
     }
     
     .hero-content {
@@ -1441,7 +1500,7 @@ footer.main-footer {
     
     .hero-content h1 {
         max-width: 100%;
-        font-size: 22px;
+        font-size: clamp(28px, 8vw, 36px);
         word-wrap: break-word;
         overflow-wrap: break-word;
         hyphens: auto;
@@ -1449,8 +1508,28 @@ footer.main-footer {
     
     .hero-meta {
         flex-wrap: wrap;
-        gap: 24px;
+        gap: 32px;
         margin-top: 40px;
+    }
+    
+    .philosophy-card {
+        padding: 48px 32px;
+    }
+    
+    .quote-symbol {
+        font-size: 4rem;
+        top: 32px;
+        left: 32px;
+    }
+    
+    .data-strip {
+        gap: 32px;
+    }
+    
+    footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 32px;
     }
     
     .hero-visual { 
