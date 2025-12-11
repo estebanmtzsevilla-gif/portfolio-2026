@@ -55,10 +55,10 @@
         .system-background .solar-system {
             position: absolute !important;
             top: 50% !important; 
-            left: 50% !important;
+            left: 65% !important;
             width: 0 !important;
             height: 0 !important;
-            /* Centrado y escalado para cubrir toda la sección */
+            /* Movido hacia la derecha y escalado para cubrir toda la sección */
             transform: translate(-50%, -50%) rotate(-15deg) scale(1.2) !important;
             transform-style: flat !important;
             transition: transform 0.1s ease-out;
@@ -74,8 +74,8 @@
             height: 200px !important;
             border-radius: 50% !important;
             background: #CCFF00 !important;
-            opacity: 0.15 !important;
-            box-shadow: 0 0 100px rgba(204, 255, 0, 0.2) !important;
+            opacity: 1 !important;
+            box-shadow: 0 0 100px rgba(204, 255, 0, 0.3) !important;
             z-index: auto !important;
             transition: opacity 0.3s ease, transform 0.3s ease !important;
         }
@@ -94,16 +94,16 @@
         }
 
         /* Tamaños de las elipses - Mayor especificidad - Escalados para cubrir más área */
-        .system-background .o1 { width: 800px !important; height: 500px !important; border-color: rgba(0,0,0,0.06) !important; border-style: solid !important; opacity: 0.4 !important; }
-        .system-background .o2 { width: 1400px !important; height: 850px !important; border-color: rgba(0,0,0,0.05) !important; border-style: solid !important; opacity: 0.3 !important; }
-        .system-background .o3 { width: 2000px !important; height: 1200px !important; border-color: rgba(0,0,0,0.04) !important; border-style: solid !important; opacity: 0.25 !important; }
+        .system-background .o1 { width: 800px !important; height: 500px !important; border-color: rgba(0,0,0,0.15) !important; border-style: solid !important; opacity: 1 !important; }
+        .system-background .o2 { width: 1400px !important; height: 850px !important; border-color: rgba(0,0,0,0.12) !important; border-style: solid !important; opacity: 1 !important; }
+        .system-background .o3 { width: 2000px !important; height: 1200px !important; border-color: rgba(0,0,0,0.1) !important; border-style: solid !important; opacity: 1 !important; }
 
         /* Estilos base de los planetas - Mayor especificidad */
         .system-background .planet {
             position: absolute !important;
             border-radius: 50% !important;
             background-color: var(--ink) !important;
-            opacity: 0.2 !important;
+            opacity: 1 !important;
             offset-anchor: center !important; /* Centra el planeta en la línea */
             animation-timing-function: linear !important;
             animation-iteration-count: infinite !important;
@@ -162,6 +162,7 @@
         /* Ajuste Responsive para que no se rompa en móviles */
         @media (max-width: 768px) {
             .system-background .solar-system {
+                left: 60% !important;
                 transform: translate(-50%, -50%) rotate(-15deg) scale(0.8) !important;
             }
             
@@ -380,7 +381,6 @@
                     const coreX = currentX * 0.1;
                     const coreY = currentY * 0.1;
                     core.style.transform = `translate(calc(-50% + ${coreX}px), calc(-50% + ${coreY}px))`;
-                    core.style.opacity = 0.15 + Math.abs(currentX + currentY) * 0.0001;
                 }
 
                 requestAnimationFrame(updateParallax);
