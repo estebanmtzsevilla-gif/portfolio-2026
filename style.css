@@ -264,9 +264,10 @@ body.modal-open .cursor-dot {
     letter-spacing: -0.03em; 
     margin-bottom: 48px;
     max-width: 680px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    hyphens: none;
+    white-space: normal;
 }
 
 .editorial-highlight {
@@ -1489,12 +1490,6 @@ footer.main-footer {
         min-width: 0;
     }
     
-    .statement-label {
-        width: 100% !important;
-        max-width: 100% !important;
-        font-size: 10px;
-        box-sizing: border-box;
-    }
     
     .hero-content h1 {
         max-width: 100%;

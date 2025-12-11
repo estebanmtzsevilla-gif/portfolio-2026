@@ -55,11 +55,11 @@
         .system-background .solar-system {
             position: absolute !important;
             top: 50% !important; 
-            left: 65% !important;
+            left: 72% !important;
             width: 0 !important;
             height: 0 !important;
-            /* Movido hacia la derecha y escalado para cubrir toda la sección */
-            transform: translate(-50%, -50%) rotate(-15deg) scale(1.2) !important;
+            /* Movido más hacia la derecha y escalado más pequeño */
+            transform: translate(-50%, -50%) rotate(-15deg) scale(0.9) !important;
             transform-style: flat !important;
             transition: transform 0.1s ease-out;
         }
@@ -75,9 +75,9 @@
             border-radius: 50% !important;
             background: #CCFF00 !important;
             opacity: 1 !important;
-            box-shadow: 0 0 100px rgba(204, 255, 0, 0.3) !important;
+            box-shadow: none !important;
             z-index: auto !important;
-            transition: opacity 0.3s ease, transform 0.3s ease !important;
+            transition: transform 0.3s ease !important;
         }
 
         /* Estilos base de las órbitas - Mayor especificidad */
@@ -162,8 +162,8 @@
         /* Ajuste Responsive para que no se rompa en móviles */
         @media (max-width: 768px) {
             .system-background .solar-system {
-                left: 60% !important;
-                transform: translate(-50%, -50%) rotate(-15deg) scale(0.8) !important;
+                left: 65% !important;
+                transform: translate(-50%, -50%) rotate(-15deg) scale(0.7) !important;
             }
             
             .system-background .o1 { width: 600px !important; height: 400px !important; }
@@ -219,8 +219,6 @@
             </div>
 
             <div class="hero-content">
-                <span class="mono statement-label">Available for work</span>
-                
                 <h1>
                     I see design as <span class="highlight-lora">purposeful creativity</span>. 
                     A powerful force that can refine everyday life or revolutionize entire industries.
@@ -229,7 +227,6 @@
                 <div class="hero-meta">
                     <div class="meta-block"><span class="mono">FOCUS</span><div class="mono" style="color: var(--ink);">Innovation & Design Ops</div></div>
                     <div class="meta-block"><span class="mono">LOCATION</span><div class="mono" style="color: var(--ink);">Mexico City</div></div>
-                    <div class="meta-block"><span class="mono">STATUS</span><div class="mono" style="color: var(--ink);">Open to Work</div></div>
                 </div>
             </div>
         </section>
@@ -374,7 +371,7 @@
                 const translateX = currentX * 0.5;
                 const translateY = currentY * 0.5;
 
-                solarSystem.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) rotate(-15deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.2)`;
+                solarSystem.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) rotate(-15deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.9)`;
 
                 // Core subtle movement
                 if (core) {
@@ -413,7 +410,7 @@
                 
                 // Subtle scroll-based movement
                 const scrollOffset = scrollProgress * 50;
-                solarSystem.style.transform = `translate(calc(-50% + ${currentX * 0.5}px), calc(-50% + ${currentY * 0.5 + scrollOffset}px)) rotate(-15deg) rotateX(${currentY * 0.02}deg) rotateY(${currentX * 0.02}deg) scale(${1.2 - scrollProgress * 0.1})`;
+                solarSystem.style.transform = `translate(calc(-50% + ${currentX * 0.5}px), calc(-50% + ${currentY * 0.5 + scrollOffset}px)) rotate(-15deg) rotateX(${currentY * 0.02}deg) rotateY(${currentX * 0.02}deg) scale(${0.9 - scrollProgress * 0.05})`;
                 
                 lastScroll = scrollY;
             });
