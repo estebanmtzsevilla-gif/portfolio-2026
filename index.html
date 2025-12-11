@@ -7,9 +7,164 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&family=Lora:ital,wght@1,600;1,700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Manrope:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Clase especial para palabras destacadas en Fraunces */
+        .highlight-lora {
+            font-family: 'Fraunces', serif;
+            font-weight: 500;
+            font-style: italic;
+            font-variation-settings: "SOFT" 100;
+        }
+
+        /* --- PRELOADER --- */
+        .preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--ink); z-index: 10000;
+            display: flex; justify-content: flex-end; align-items: flex-end; padding: 40px;
+            transition: transform 1s cubic-bezier(0.83, 0, 0.17, 1);
+        }
+        .loader-content { font-family: 'Manrope', sans-serif; color: #CCFF00; font-size: 10vw; line-height: 1; }
+        body.loaded .preloader { transform: translateY(-100%); }
+        body.loading { overflow: hidden; }
+
+        /* --- CURSOR --- */
+        .cursor-dot {
+            width: 12px; height: 12px; background-color: var(--ink);
+            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001;
+            transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s;
+            mix-blend-mode: normal;
+        }
+        body.hovering .cursor-dot { width: 80px; height: 80px; background-color: #CCFF00; mix-blend-mode: multiply; }
+
+        /* --- SYSTEM BACKGROUND --- */
+        .system-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Detrás del contenido */
+            pointer-events: none; /* Deja pasar los clicks */
+            overflow: hidden; /* Respeta el contenedor */
+        }
+
+        /* Geometría General del Sistema - Mayor especificidad para sobrescribir CSS externo */
+        .system-background .solar-system {
+            position: absolute !important;
+            /* Posición ajustada para equilibrio visual - 100px más a la izquierda */
+            top: 50% !important; 
+            right: 100px !important; 
+            width: 0 !important;
+            height: 0 !important;
+            /* Inclinación del eje (Estilo Editorial) */
+            transform: translateY(-50%) rotate(-25deg) !important;
+            transform-style: flat !important;
+        }
+
+        /* El Sol / Núcleo - Mayor especificidad */
+        .system-background .core {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 150px !important;
+            height: 150px !important;
+            border-radius: 50% !important;
+            background: #CCFF00 !important; /* Acid Green del snippet */
+            box-shadow: none !important;
+            z-index: auto !important;
+        }
+
+        /* Estilos base de las órbitas - Mayor especificidad */
+        .system-background .orbit {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            border: 1px solid rgba(0,0,0,0.08) !important; /* Línea sutil */
+            border-radius: 50% !important;
+            transform-style: flat !important;
+            animation: none !important;
+            opacity: 1 !important;
+        }
+
+        /* Tamaños de las elipses - Mayor especificidad */
+        .system-background .o1 { width: 500px !important; height: 300px !important; border-color: rgba(0,0,0,0.08) !important; border-style: solid !important; }
+        .system-background .o2 { width: 900px !important; height: 550px !important; border-color: rgba(0,0,0,0.08) !important; border-style: solid !important; }
+        .system-background .o3 { width: 1400px !important; height: 850px !important; border-color: rgba(0,0,0,0.08) !important; border-style: solid !important; }
+
+        /* Estilos base de los planetas - Mayor especificidad */
+        .system-background .planet {
+            position: absolute !important;
+            border-radius: 50% !important;
+            background-color: var(--ink) !important;
+            offset-anchor: center !important; /* Centra el planeta en la línea */
+            animation-timing-function: linear !important;
+            animation-iteration-count: infinite !important;
+            transform-style: flat !important;
+            box-shadow: none !important;
+        }
+
+        /* ANIMACIONES Y TRAYECTORIAS - Mayor especificidad */
+        
+        /* Planeta 1: Pequeño y Rápido (8s) */
+        .system-background .p1 { 
+            width: 30px !important; 
+            height: 30px !important; 
+            top: auto !important;
+            left: auto !important;
+            /* La ruta debe coincidir con la mitad del tamaño de su órbita .o1 */
+            offset-path: ellipse(250px 150px at 50% 50%) !important;
+            animation-name: travel !important;
+            animation-duration: 8s !important; 
+            transform: none !important;
+        }
+
+        /* Planeta 2: Mediano y Contrarrotación (15s) */
+        .system-background .p2 { 
+            width: 60px !important; 
+            height: 60px !important; 
+            top: auto !important;
+            left: auto !important;
+            offset-path: ellipse(450px 275px at 50% 50%) !important;
+            animation-name: travel-reverse !important;
+            animation-duration: 15s !important;
+            transform: none !important;
+        }
+
+        /* Planeta 3: Pequeño y Lento (25s) */
+        .system-background .p3 { 
+            width: 15px !important; 
+            height: 15px !important; 
+            top: auto !important;
+            left: auto !important;
+            offset-path: ellipse(700px 425px at 50% 50%) !important;
+            animation-name: travel !important;
+            animation-duration: 25s !important;
+            transform: none !important;
+        }
+
+        /* Keyframes de movimiento */
+        @keyframes travel { 
+            to { offset-distance: 100%; } 
+        }
+        
+        @keyframes travel-reverse { 
+            to { offset-distance: -100%; } 
+        }
+
+        /* Ajuste Responsive para que no se rompa en móviles */
+        @media (max-width: 768px) {
+            .system-background .solar-system {
+                top: 50% !important;
+                right: -20% !important; /* Ajustado para móvil */
+                transform: translateY(-50%) rotate(-25deg) scale(0.6) !important; /* Reduce escala */
+            }
+        }
+    </style>
 </head>
 <body class="loading">
 
@@ -38,9 +193,9 @@
                 </h1>
                 
                 <div class="hero-meta">
-                    <div class="meta-block"><span class="mono">FOCUS</span><div class="mono">Innovation & Design Ops</div></div>
-                    <div class="meta-block"><span class="mono">LOCATION</span><div class="mono">Mexico City</div></div>
-                    <div class="meta-block"><span class="mono">STATUS</span><div class="mono">Open to Work</div></div>
+                    <div class="meta-block"><span class="mono">FOCUS</span><div class="mono" style="color: var(--ink);">Innovation & Design Ops</div></div>
+                    <div class="meta-block"><span class="mono">LOCATION</span><div class="mono" style="color: var(--ink);">Mexico City</div></div>
+                    <div class="meta-block"><span class="mono">STATUS</span><div class="mono" style="color: var(--ink);">Open to Work</div></div>
                 </div>
             </div>
 
@@ -71,35 +226,35 @@
             </div>
 
             <div class="project-list">
-                <a href="designing-in-the-ai-era.html" class="project-row">
+                <a href="designing-in-the-ai-era.html" class="project-row" data-img="https://via.placeholder.com/600x400/F2F2F2/111?text=AI+ERA">
                     <span class="p-id mono">01</span>
                     <span class="p-title">Designing in the AI Era: A Framework</span>
                     <span class="p-tags mono">Design Ops / AI Strategy</span>
                     <span class="p-arrow">→</span>
                 </a>
                 
-                <a href="building-customer-centric-culture-fintech.html" class="project-row">
+                <a href="building-customer-centric-culture-fintech.html" class="project-row" data-img="assets/img/website-context.png">
                     <span class="p-id mono">02</span>
                     <span class="p-title">Building a Customer Centric Culture in Fintech</span>
                     <span class="p-tags mono">Strategy / Transformation</span>
                     <span class="p-arrow">→</span>
                 </a>
                 
-                <a href="centeo.html" class="project-row">
+                <a href="centeo.html" class="project-row" data-img="https://via.placeholder.com/600x400/F2F2F2/111?text=CENTEO">
                     <span class="p-id mono">03</span>
                     <span class="p-title">Centeo</span>
                     <span class="p-tags mono">UI Design / Fintech</span>
                     <span class="p-arrow">→</span>
                 </a>
 
-                <a href="lok-hub.html" class="project-row">
+                <a href="lok-hub.html" class="project-row" data-img="https://via.placeholder.com/600x400/F2F2F2/111?text=LOK+HUB">
                     <span class="p-id mono">04</span>
                     <span class="p-title">LOK Hub</span>
                     <span class="p-tags mono">Product Design / Logistics</span>
                     <span class="p-arrow">→</span>
                 </a>
                 
-                <a href="crypto-wallet.html" class="project-row">
+                <a href="crypto-wallet.html" class="project-row" data-img="https://via.placeholder.com/600x400/F2F2F2/111?text=CRYPTO">
                     <span class="p-id mono">05</span>
                     <span class="p-title">Crypto Wallet</span>
                     <span class="p-tags mono">UI Design / Web3</span>
@@ -113,34 +268,32 @@
             
             <div class="philosophy-container">
                 <div class="philosophy-card">
-                    <span class="quote-symbol mono">"</span>
+                    <span class="quote-symbol">"</span>
                     
                     <p class="editorial-quote">
-                        I build <span class="highlight-lora">innovation systems</span> that enable design to scale. 
-                        Bridging the gap between <span class="highlight-lora">creative vision</span> and operational reality.
+                        I build <strong>innovation systems</strong> that enable design to scale. Bridging the gap between creative vision and operational reality.
                     </p>
                     
                     <p class="editorial-sub">
-                        Throughout my career, I've realized that for design to have an impact, 
-                        designers should care about the conversations, the processes, and the culture we build.
+                        Throughout my career, I've realized that for design to have an impact, designers should care about the conversations, the processes, and the culture we build.
                     </p>
                 </div>
                 <div class="data-strip">
                     <div class="data-point">
                         <span class="dp-label">Experience</span>
-                        <span class="dp-value mono">8+ Years</span>
+                        <span class="dp-value">8+ Years</span>
                     </div>
                     <div class="data-point">
                         <span class="dp-label">Delivered</span>
-                        <span class="dp-value mono">50+ Projects</span>
+                        <span class="dp-value">50+ Projects</span>
                     </div>
                     <div class="data-point">
                         <span class="dp-label">Impact</span>
-                        <span class="dp-value mono">~10M Users</span>
+                        <span class="dp-value">~10M Users</span>
                     </div>
                     <div class="data-point">
                         <span class="dp-label">Leadership</span>
-                        <span class="dp-value mono">4 Years</span>
+                        <span class="dp-value">4 Years</span>
                     </div>
                 </div>
             </div>
