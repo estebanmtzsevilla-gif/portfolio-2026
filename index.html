@@ -138,7 +138,7 @@
         </section>
 
         <section id="about" class="about-section">
-            <div class="section-label mono" style="margin-bottom: 64px;">{02} — Philosophy & Metrics</div>
+            <div class="section-label mono" style="margin-bottom: 64px; border-bottom: 2px solid var(--ink); padding-bottom: 12px;">{02} — Philosophy & Metrics</div>
             
             <div class="philosophy-container">
                 <div class="philosophy-card">
@@ -318,7 +318,7 @@
                     color: '#555555',
                     glowColor: 'rgba(85, 85, 85, 1)',
                     orbitRadius: 150,
-                    orbitSpeed: 0.0003,
+                    orbitSpeed: 0.002, // Aumentado de 0.0003
                     orbitPhase: Math.PI
                 }),
                 new Planet({
@@ -328,7 +328,7 @@
                     color: '#555555',
                     glowColor: 'rgba(85, 85, 85, 1)',
                     orbitRadius: 240,
-                    orbitSpeed: 0.0005,
+                    orbitSpeed: 0.0015, // Aumentado de 0.0005
                     orbitPhase: 0
                 }),
                 new Planet({
@@ -338,7 +338,7 @@
                     color: '#555555',
                     glowColor: 'rgba(85, 85, 85, 1)',
                     orbitRadius: 340,
-                    orbitSpeed: 0.0007,
+                    orbitSpeed: 0.001, // Aumentado de 0.0007
                     orbitPhase: Math.PI * 0.7
                 }),
                 new Planet({
@@ -348,7 +348,7 @@
                     color: '#555555',
                     glowColor: 'rgba(85, 85, 85, 1)',
                     orbitRadius: 450,
-                    orbitSpeed: 0.0002,
+                    orbitSpeed: 0.0008, // Aumentado de 0.0002
                     orbitPhase: Math.PI * 1.5
                 })
             ];
@@ -413,7 +413,7 @@
                     }
                 });
                 
-                time += 16;
+                time += 2; // Incremento aumentado para animación más rápida
                 requestAnimationFrame(animate);
             }
             
