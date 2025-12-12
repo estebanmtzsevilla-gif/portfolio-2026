@@ -434,6 +434,25 @@
             
             animate();
         }
+
+        // ANIMATION FOR PHILOSOPHY SECTION - Expand from corners
+        const aboutSection = document.querySelector('.about-section');
+        if (aboutSection) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        // Una vez animado, podemos dejar de observar
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.2, // Se activa cuando el 20% de la sección es visible
+                rootMargin: '0px 0px -100px 0px'
+            });
+            
+            observer.observe(aboutSection);
+        }
     </script>
 </body>
 </html>
