@@ -216,15 +216,12 @@
             
             // Set canvas to fit container - use full area of the bordered rectangle
             const container = canvas.parentElement;
-            canvas.width = container.offsetWidth;
-            canvas.height = container.offsetHeight;
             
             let time = 0;
             let speedMultiplier = 1.0;
             let zoomLevel = 0.65; // Zoom out para ver más planetas
-            
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
+            let centerX, centerY;
+            let sun, planets;
             
             // Planet class
             class Planet {
@@ -275,57 +272,77 @@
                 }
             }
             
-            const sun = new Planet({
-                x: centerX,
-                y: centerY,
-                radius: 120,
-                color: '#4A4A4A',
-                glowColor: 'rgba(74, 74, 74, 0.6)',
-                isSun: true
-            });
+            // Initialize planets and sun
+            const initPlanets = () => {
+                centerX = canvas.width / 2;
+                centerY = canvas.height / 2;
+                
+                sun = new Planet({
+                    x: centerX,
+                    y: centerY,
+                    radius: 120,
+                    color: '#4A4A4A',
+                    glowColor: 'rgba(74, 74, 74, 0.6)',
+                    isSun: true
+                });
+                
+                planets = [
+                    new Planet({
+                        x: centerX,
+                        y: centerY,
+                        radius: 45,
+                        color: '#FFFFFF',
+                        glowColor: 'rgba(255, 255, 255, 1)',
+                        orbitRadius: 200,
+                        orbitSpeed: 0.0008,
+                        orbitPhase: Math.PI
+                    }),
+                    new Planet({
+                        x: centerX,
+                        y: centerY,
+                        radius: 35,
+                        color: '#FFFFFF',
+                        glowColor: 'rgba(255, 255, 255, 1)',
+                        orbitRadius: 330,
+                        orbitSpeed: 0.0005,
+                        orbitPhase: 0
+                    }),
+                    new Planet({
+                        x: centerX,
+                        y: centerY,
+                        radius: 25,
+                        color: '#FFFFFF',
+                        glowColor: 'rgba(255, 255, 255, 1)',
+                        orbitRadius: 460,
+                        orbitSpeed: 0.00035,
+                        orbitPhase: Math.PI * 0.7
+                    }),
+                    new Planet({
+                        x: centerX,
+                        y: centerY,
+                        radius: 55,
+                        color: '#FFFFFF',
+                        glowColor: 'rgba(255, 255, 255, 1)',
+                        orbitRadius: 600,
+                        orbitSpeed: 0.00025,
+                        orbitPhase: Math.PI * 1.5
+                    })
+                ];
+            };
             
-            const planets = [
-                new Planet({
-                    x: centerX,
-                    y: centerY,
-                    radius: 45,
-                    color: '#FFFFFF',
-                    glowColor: 'rgba(255, 255, 255, 1)',
-                    orbitRadius: 200,
-                    orbitSpeed: 0.0008,
-                    orbitPhase: Math.PI
-                }),
-                new Planet({
-                    x: centerX,
-                    y: centerY,
-                    radius: 35,
-                    color: '#FFFFFF',
-                    glowColor: 'rgba(255, 255, 255, 1)',
-                    orbitRadius: 330,
-                    orbitSpeed: 0.0005,
-                    orbitPhase: 0
-                }),
-                new Planet({
-                    x: centerX,
-                    y: centerY,
-                    radius: 25,
-                    color: '#FFFFFF',
-                    glowColor: 'rgba(255, 255, 255, 1)',
-                    orbitRadius: 460,
-                    orbitSpeed: 0.00035,
-                    orbitPhase: Math.PI * 0.7
-                }),
-                new Planet({
-                    x: centerX,
-                    y: centerY,
-                    radius: 55,
-                    color: '#FFFFFF',
-                    glowColor: 'rgba(255, 255, 255, 1)',
-                    orbitRadius: 600,
-                    orbitSpeed: 0.00025,
-                    orbitPhase: Math.PI * 1.5
-                })
-            ];
+            // Initialize canvas dimensions and planets
+            const initCanvas = () => {
+                if (container.offsetWidth > 0 && container.offsetHeight > 0) {
+                    canvas.width = container.offsetWidth;
+                    canvas.height = container.offsetHeight;
+                    initPlanets();
+                    animate();
+                } else {
+                    requestAnimationFrame(initCanvas);
+                }
+            };
+            
+            initCanvas();
             
             function drawWaves() {
                 ctx.save();
