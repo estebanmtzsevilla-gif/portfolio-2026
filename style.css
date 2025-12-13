@@ -323,8 +323,9 @@ body.modal-open .cursor-dot {
     position: relative;
     /* Use 6 columns out of 8, aligned to the right */
     width: calc((100% / 8) * 6); /* 6/8 = 75% of available width */
-    /* Maintain 16:9 aspect ratio */
-    aspect-ratio: 16 / 9;
+    /* Calculate height from width maintaining 16:9 ratio, then reduce by 48px */
+    height: calc(((100% / 8) * 6) * 9 / 16 - 48px);
+    aspect-ratio: auto;
     margin-left: auto; /* Push to the right */
 }
 
@@ -456,6 +457,7 @@ section.hero .meta-label {
     .hero-mesh-container {
         width: 100%;
         max-width: 950px;
+        aspect-ratio: 16 / 9;
         height: auto;
         min-height: 300px;
         padding: 40px 20px;
