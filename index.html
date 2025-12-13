@@ -75,7 +75,7 @@
                         <span class="hero-text-normal">a powerful force that can refine everyday life or revolutionize entire industries.</span>
                     </div>
                     <div class="hero-text-block">
-                        <span class="hero-text-bold">I focus on helping designers and design teams </span>
+                        <span class="hero-text-bold">I focus on building systems that help designers and design teams </span>
                         <span class="hero-text-bold">deliver on that promise.</span>
                     </div>
                 </div>
@@ -351,15 +351,16 @@
                 ctx.setLineDash([2, 3]);
                 
                 // Draw horizontal lines with sphere volume effect only
-                // Cover entire canvas including edges
-                const lineSpacing = 4;
-                const padding = 50; // Extra padding to ensure coverage
+                // Cover entire canvas including edges - denser mesh
+                const lineSpacing = 3; // Reduced from 4 for denser mesh
+                const padding = 100; // Increased padding for better corner coverage
                 
+                // Draw more lines beyond canvas bounds to ensure corners are covered
                 for (let y = -padding; y < canvas.height + padding; y += lineSpacing) {
                     ctx.beginPath();
                     let pathStarted = false;
                     
-                    // Start from well before left edge to ensure coverage
+                    // Start from well before left edge and extend well past right edge
                     for (let x = -padding; x < canvas.width + padding; x += 1) {
                         let sphereDisplacement = 0;
                         
@@ -380,8 +381,9 @@
                         
                         const finalY = y + sphereDisplacement;
                         
-                        // Only draw if within or near canvas bounds
-                        if (finalY >= -padding && finalY <= canvas.height + padding) {
+                        // Draw lines that intersect with canvas area (more permissive)
+                        if (finalY >= -padding && finalY <= canvas.height + padding &&
+                            x >= -padding && x <= canvas.width + padding) {
                             if (!pathStarted) {
                                 ctx.moveTo(x, finalY);
                                 pathStarted = true;
