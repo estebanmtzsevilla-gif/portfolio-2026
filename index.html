@@ -368,45 +368,63 @@
                 ctx.setLineDash([2, 3]);
                 
                 // Draw horizontal lines with sphere volume effect only
-                // Cover entire canvas including edges - denser mesh
-                const lineSpacing = 3; // Reduced from 4 for denser mesh
-                const padding = 100; // Increased padding for better corner coverage
+                // Optimized for performance
+                const lineSpacing = 5; // Increased for better performance
+                const padding = 50; // Reduced padding
+                const xStep = 2; // Sample every 2 pixels instead of 1 for better performance
                 
-                // Draw more lines beyond canvas bounds to ensure corners are covered
-                for (let y = -padding; y < canvas.height + padding; y += lineSpacing) {
+                // Only draw lines that are visible or near visible area
+                const visibleStartY = Math.max(-padding, 0);
+                const visibleEndY = Math.min(canvas.height + padding, canvas.height + padding);
+                
+                for (let y = visibleStartY; y < visibleEndY; y += lineSpacing) {
                     ctx.beginPath();
                     let pathStarted = false;
                     
-                    // Start from well before left edge and extend well past right edge
-                    for (let x = -padding; x < canvas.width + padding; x += 1) {
+                    // Only iterate over visible x range
+                    const visibleStartX = Math.max(-padding, 0);
+                    const visibleEndX = Math.min(canvas.width + padding, canvas.width + padding);
+                    
+                    for (let x = visibleStartX; x < visibleEndX; x += xStep) {
                         let sphereDisplacement = 0;
                         
                         // Calculate displacement from all bodies - only sphere volume effect
-                        allBodies.forEach(body => {
+                        // Early exit if far from any body
+                        let nearBody = false;
+                        for (let i = 0; i < allBodies.length; i++) {
+                            const body = allBodies[i];
                             const dx = x - body.x;
                             const dy = y - body.y;
-                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            const distSq = dx * dx + dy * dy;
+                            const maxRadiusSq = body.radius * body.radius;
                             
-                            // SPHERE VOLUME EFFECT - Lift lines up when inside sphere
-                            if (distance < body.radius) {
+                            // Only calculate if within influence range
+                            if (distSq < maxRadiusSq) {
+                                nearBody = true;
+                                const distance = Math.sqrt(distSq);
                                 const normalizedDist = distance / body.radius;
                                 const heightFactor = Math.sqrt(1 - normalizedDist * normalizedDist);
                                 const lift = heightFactor * body.radius * 0.8;
-                                sphereDisplacement -= lift; // Lift up (negative Y)
+                                sphereDisplacement -= lift;
                             }
-                        });
+                        }
+                        
+                        // Skip if not near any body and outside canvas
+                        if (!nearBody && (x < 0 || x > canvas.width || y < 0 || y > canvas.height)) {
+                            if (pathStarted) {
+                                ctx.stroke();
+                                pathStarted = false;
+                            }
+                            continue;
+                        }
                         
                         const finalY = y + sphereDisplacement;
                         
-                        // Draw lines that intersect with canvas area (more permissive)
-                        if (finalY >= -padding && finalY <= canvas.height + padding &&
-                            x >= -padding && x <= canvas.width + padding) {
-                            if (!pathStarted) {
-                                ctx.moveTo(x, finalY);
-                                pathStarted = true;
-                            } else {
-                                ctx.lineTo(x, finalY);
-                            }
+                        if (!pathStarted) {
+                            ctx.moveTo(x, finalY);
+                            pathStarted = true;
+                        } else {
+                            ctx.lineTo(x, finalY);
                         }
                     }
                     
