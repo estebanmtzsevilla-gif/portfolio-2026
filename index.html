@@ -327,7 +327,7 @@
                 })
             ];
             
-            const pixelGridSpacing = 3; // Reduced spacing for more lines/denser mesh
+            const pixelGridSpacing = 4; // Slightly increased for better performance
             const lineWidth = 2;
             
             function drawDisplacedPixelGrid() {
@@ -379,46 +379,46 @@
                     }
                 }
                 
-                ctx.fillStyle = 'rgba(16, 55, 246, 0.4)';
+                ctx.lineWidth = lineWidth;
                 ctx.strokeStyle = 'rgba(16, 55, 246, 0.4)';
+                ctx.setLineDash([3, 3]); // Dotted pattern
                 
                 const drawExtension = 250;
-                // Draw dotted mesh - individual points instead of continuous lines
+                // Draw dotted mesh with optimized path drawing
                 for (let y = -drawExtension; y < canvas.height + drawExtension; y += pixelGridSpacing) {
-                    for (let x = -drawExtension; x < canvas.width + drawExtension; x += pixelGridSpacing) {
-                        if (gridPoints[x] && gridPoints[x][y]) {
-                            const point = gridPoints[x][y];
-                            
-                            // Draw a small circle at each grid point
-                            ctx.beginPath();
-                            ctx.arc(point.x, point.y, 1, 0, Math.PI * 2);
-                            ctx.fill();
-                        }
-                    }
-                }
-                
-                // Optionally, draw short connecting lines only between nearby points
-                ctx.lineWidth = lineWidth;
-                ctx.setLineDash([2, 3]); // Shorter dashes with gaps
-                
-                for (let y = -drawExtension; y < canvas.height + drawExtension; y += pixelGridSpacing) {
+                    ctx.beginPath();
+                    let pathStarted = false;
+                    
                     for (let x = -drawExtension; x < canvas.width + drawExtension; x += pixelGridSpacing) {
                         if (gridPoints[x] && gridPoints[x][y] && gridPoints[x + pixelGridSpacing] && gridPoints[x + pixelGridSpacing][y]) {
                             const point1 = gridPoints[x][y];
                             const point2 = gridPoints[x + pixelGridSpacing][y];
                             
-                            // Only draw line if the displacement is small (both points similarly affected)
+                            // Check if displacement difference is acceptable (prevents halo)
                             const yDiff = Math.abs(point1.y - point2.y);
                             const xDiff = Math.abs(point1.x - point2.x);
                             
-                            // Draw short dotted line if points are close enough
-                            if (yDiff < pixelGridSpacing * 1.5 && xDiff < pixelGridSpacing * 1.5) {
-                                ctx.beginPath();
-                                ctx.moveTo(point1.x, point1.y);
+                            // Only connect points if they're not too far apart (smart line breaking)
+                            if (yDiff < pixelGridSpacing * 2 && xDiff < pixelGridSpacing * 2) {
+                                if (!pathStarted) {
+                                    ctx.moveTo(point1.x, point1.y);
+                                    pathStarted = true;
+                                }
                                 ctx.lineTo(point2.x, point2.y);
+                            } else if (pathStarted) {
+                                // Break the path if displacement is too large
                                 ctx.stroke();
+                                pathStarted = false;
                             }
+                        } else if (pathStarted) {
+                            // Break path on gaps
+                            ctx.stroke();
+                            pathStarted = false;
                         }
+                    }
+                    
+                    if (pathStarted) {
+                        ctx.stroke();
                     }
                 }
                 
