@@ -384,36 +384,47 @@
                 ctx.setLineDash([3, 3]); // Dotted pattern
                 
                 const drawExtension = 250;
-                // Draw dotted mesh with optimized path drawing
+                // Draw dotted mesh with aggressive halo prevention
                 for (let y = -drawExtension; y < canvas.height + drawExtension; y += pixelGridSpacing) {
                     ctx.beginPath();
                     let pathStarted = false;
+                    let lastY = null;
                     
                     for (let x = -drawExtension; x < canvas.width + drawExtension; x += pixelGridSpacing) {
                         if (gridPoints[x] && gridPoints[x][y] && gridPoints[x + pixelGridSpacing] && gridPoints[x + pixelGridSpacing][y]) {
                             const point1 = gridPoints[x][y];
                             const point2 = gridPoints[x + pixelGridSpacing][y];
                             
-                            // Check if displacement difference is acceptable (prevents halo)
+                            // More aggressive check: compare Y displacement to detect if crossing planet boundary
                             const yDiff = Math.abs(point1.y - point2.y);
                             const xDiff = Math.abs(point1.x - point2.x);
                             
-                            // Only connect points if they're not too far apart (smart line breaking)
-                            if (yDiff < pixelGridSpacing * 2 && xDiff < pixelGridSpacing * 2) {
+                            // Also check if there's a sudden jump from last point's Y position
+                            const shouldBreak = lastY !== null && Math.abs(point1.y - lastY) > pixelGridSpacing * 0.8;
+                            
+                            // Only connect if displacement is minimal and no sudden jumps
+                            if (yDiff < pixelGridSpacing * 0.8 && xDiff < pixelGridSpacing * 1.2 && !shouldBreak) {
                                 if (!pathStarted) {
                                     ctx.moveTo(point1.x, point1.y);
                                     pathStarted = true;
                                 }
                                 ctx.lineTo(point2.x, point2.y);
-                            } else if (pathStarted) {
-                                // Break the path if displacement is too large
+                                lastY = point2.y;
+                            } else {
+                                // Break the path aggressively if any condition fails
+                                if (pathStarted) {
+                                    ctx.stroke();
+                                    pathStarted = false;
+                                }
+                                lastY = null;
+                            }
+                        } else {
+                            // Break path on gaps
+                            if (pathStarted) {
                                 ctx.stroke();
                                 pathStarted = false;
                             }
-                        } else if (pathStarted) {
-                            // Break path on gaps
-                            ctx.stroke();
-                            pathStarted = false;
+                            lastY = null;
                         }
                     }
                     
