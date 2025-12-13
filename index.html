@@ -346,26 +346,20 @@
                     ...planetPositions
                 ];
                 
-                // Wave parameters
-                const waveSpacing = 8; // Distance between wave lines
-                const waveAmplitude = 2; // Height of waves
-                const numWaves = 12; // Number of wave rings per body
-                
                 ctx.strokeStyle = 'rgba(16, 55, 246, 0.4)';
                 ctx.lineWidth = 1;
                 ctx.setLineDash([2, 3]);
                 
-                // Draw horizontal wave lines with sphere volume effect
+                // Draw horizontal lines with sphere volume effect only
                 const lineSpacing = 4;
                 for (let y = 0; y < canvas.height; y += lineSpacing) {
                     ctx.beginPath();
                     let pathStarted = false;
                     
                     for (let x = 0; x < canvas.width; x += 1) {
-                        let waveHeight = 0;
                         let sphereDisplacement = 0;
                         
-                        // Calculate displacement from all bodies
+                        // Calculate displacement from all bodies - only sphere volume effect
                         allBodies.forEach(body => {
                             const dx = x - body.x;
                             const dy = y - body.y;
@@ -378,19 +372,9 @@
                                 const lift = heightFactor * body.radius * 0.8;
                                 sphereDisplacement -= lift; // Lift up (negative Y)
                             }
-                            
-                            // WAVE EFFECT - Circular waves outside sphere
-                            if (distance > body.radius && distance < body.radius + numWaves * waveSpacing) {
-                                const waveDistance = distance - body.radius;
-                                const wavePhase = (waveDistance / waveSpacing) + (time * 0.001);
-                                const waveStrength = 1 - (waveDistance / (numWaves * waveSpacing));
-                                
-                                // Use sine wave with fading amplitude
-                                waveHeight += Math.sin(wavePhase * Math.PI * 2) * waveAmplitude * waveStrength * waveStrength;
-                            }
                         });
                         
-                        const finalY = y + sphereDisplacement + waveHeight;
+                        const finalY = y + sphereDisplacement;
                         
                         if (!pathStarted) {
                             ctx.moveTo(x, finalY);
