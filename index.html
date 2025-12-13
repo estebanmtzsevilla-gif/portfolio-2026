@@ -327,10 +327,7 @@
                 })
             ];
             
-            const pixelGridSpacing = 3; // Dense mesh
-            const lineWidth = 2;
-            
-            function drawDisplacedPixelGrid() {
+            function drawWaves() {
                 ctx.save();
                 
                 // Apply rotation transform
@@ -349,95 +346,53 @@
                     ...planetPositions
                 ];
                 
-                const gridExtension = 250;
-                const gridPoints = [];
-                for (let x = -gridExtension; x < canvas.width + gridExtension; x += pixelGridSpacing) {
-                    gridPoints[x] = [];
-                    for (let y = -gridExtension; y < canvas.height + gridExtension; y += pixelGridSpacing) {
-                        let finalX = x;
-                        let finalY = y;
+                // Wave parameters
+                const waveSpacing = 8; // Distance between wave lines
+                const waveAmplitude = 3; // Height of waves
+                const numWaves = 15; // Number of wave rings per body
+                
+                ctx.strokeStyle = 'rgba(16, 55, 246, 0.4)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 3]);
+                
+                // Draw horizontal wave lines
+                const lineSpacing = 4;
+                for (let y = 0; y < canvas.height; y += lineSpacing) {
+                    ctx.beginPath();
+                    let pathStarted = false;
+                    
+                    for (let x = 0; x < canvas.width; x += 1) {
+                        let waveHeight = 0;
                         
+                        // Calculate wave displacement from all bodies
                         allBodies.forEach(body => {
                             const dx = x - body.x;
                             const dy = y - body.y;
                             const distance = Math.sqrt(dx * dx + dy * dy);
                             
-                            if (distance < body.radius) {
-                                const normalizedDist = distance / body.radius;
-                                // Restore spherical shape with sqrt formula
-                                const heightFactor = Math.sqrt(1 - normalizedDist * normalizedDist);
-                                const lift = heightFactor * body.radius * 0.8;
-                                // Only displace in Y to maintain spherical shape
-                                finalY -= lift;
+                            // Create circular waves around each body
+                            if (distance > body.radius && distance < body.radius + numWaves * waveSpacing) {
+                                const waveDistance = distance - body.radius;
+                                const wavePhase = (waveDistance / waveSpacing) + (time * 0.001);
+                                const waveStrength = 1 - (waveDistance / (numWaves * waveSpacing));
+                                
+                                // Use sine wave with fading amplitude
+                                waveHeight += Math.sin(wavePhase * Math.PI * 2) * waveAmplitude * waveStrength * waveStrength;
                             }
                         });
                         
-                        gridPoints[x][y] = {
-                            x: finalX,
-                            y: finalY
-                        };
-                    }
-                }
-                
-                ctx.fillStyle = 'rgba(16, 55, 246, 0.4)';
-                
-                const drawExtension = 250;
-                // Draw points - but use smarter batching
-                let pointCount = 0;
-                const maxPointsPerBatch = 300;
-                
-                for (let y = -drawExtension; y < canvas.height + drawExtension; y += pixelGridSpacing) {
-                    for (let x = -drawExtension; x < canvas.width + drawExtension; x += pixelGridSpacing) {
-                        if (gridPoints[x] && gridPoints[x][y]) {
-                            const point = gridPoints[x][y];
-                            
-                            // Only draw if point is within or near canvas bounds
-                            if (point.x >= -50 && point.x <= canvas.width + 50 && 
-                                point.y >= -50 && point.y <= canvas.height + 50) {
-                                
-                                if (pointCount === 0) {
-                                    ctx.beginPath();
-                                }
-                                
-                                ctx.arc(point.x, point.y, 0.8, 0, Math.PI * 2);
-                                pointCount++;
-                                
-                                if (pointCount >= maxPointsPerBatch) {
-                                    ctx.fill();
-                                    pointCount = 0;
-                                }
-                            }
+                        const finalY = y + waveHeight;
+                        
+                        if (!pathStarted) {
+                            ctx.moveTo(x, finalY);
+                            pathStarted = true;
+                        } else {
+                            ctx.lineTo(x, finalY);
                         }
                     }
-                }
-                
-                if (pointCount > 0) {
-                    ctx.fill();
-                }
-                
-                // Draw connecting lines with smart breaking
-                ctx.strokeStyle = 'rgba(16, 55, 246, 0.3)';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([2, 4]);
-                
-                for (let y = -drawExtension; y < canvas.height + drawExtension; y += pixelGridSpacing) {
-                    for (let x = -drawExtension; x < canvas.width + drawExtension - pixelGridSpacing; x += pixelGridSpacing) {
-                        if (gridPoints[x] && gridPoints[x][y] && gridPoints[x + pixelGridSpacing] && gridPoints[x + pixelGridSpacing][y]) {
-                            const point1 = gridPoints[x][y];
-                            const point2 = gridPoints[x + pixelGridSpacing][y];
-                            
-                            // Only draw if both points are visible and displacement is small
-                            if ((point1.x >= -50 && point1.x <= canvas.width + 50) &&
-                                (point2.x >= -50 && point2.x <= canvas.width + 50)) {
-                                const yDiff = Math.abs(point1.y - point2.y);
-                                if (yDiff < pixelGridSpacing * 0.5) {
-                                    ctx.beginPath();
-                                    ctx.moveTo(point1.x, point1.y);
-                                    ctx.lineTo(point2.x, point2.y);
-                                    ctx.stroke();
-                                }
-                            }
-                        }
+                    
+                    if (pathStarted) {
+                        ctx.stroke();
                     }
                 }
                 
@@ -463,7 +418,7 @@
                 
                 allObjects.sort((a, b) => a.pos.z - b.pos.z);
                 
-                drawDisplacedPixelGrid();
+                drawWaves();
                 
                 allObjects.forEach(({ obj, pos }) => {
                     obj.draw(sunPos);
