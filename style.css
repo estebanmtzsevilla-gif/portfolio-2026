@@ -121,16 +121,34 @@ h1, h2, h3, h4 {
 .container { 
     max-width: 1400px; 
     margin: 0 auto; 
-    padding: 0 60px; 
+    padding: 0; 
     background: var(--bg); 
     min-height: 100vh; 
     position: relative;
     overflow-x: hidden; /* Prevent horizontal scroll */
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 0;
+    column-gap: 0;
+}
+
+/* Content wrapper for 8 central columns (columns 3-10) */
+.container > header,
+.container > section,
+.container > footer {
+    grid-column: 3 / 11; /* Spans columns 3 through 10 (8 columns) */
 }
 
 @media (max-width: 768px) {
     .container {
-        padding: 0 24px;
+        padding: 0;
+        grid-template-columns: repeat(12, 1fr);
+    }
+    
+    .container > header,
+    .container > section,
+    .container > footer {
+        grid-column: 2 / 12; /* Use more columns on mobile */
     }
 }
 
@@ -290,26 +308,30 @@ body.modal-open .cursor-dot {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 48.01px;
+    width: 100%;
 }
 
 .hero-mesh-container {
-    width: 950px;
+    width: 100%;
     height: 500px;
-    padding: 233px 271px;
     background: white;
     outline: 2px #B2F055 solid;
     outline-offset: -2px;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 #planetary-canvas {
     display: block;
     width: 100%;
     height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .hero-text-container {
@@ -318,11 +340,11 @@ body.modal-open .cursor-dot {
     justify-content: flex-start;
     align-items: flex-start;
     gap: 32px;
-    width: 1280px;
+    width: 100%;
 }
 
 .hero-text-block {
-    width: 1280px;
+    width: 100%;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -359,11 +381,11 @@ body.modal-open .cursor-dot {
 .hero-meta {
     align-self: stretch;
     padding-top: 24px;
-    padding-right: 412px;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 24px;
+    width: 100%;
 }
 
 .meta-block {
