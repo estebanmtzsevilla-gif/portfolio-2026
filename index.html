@@ -351,12 +351,16 @@
                 ctx.setLineDash([2, 3]);
                 
                 // Draw horizontal lines with sphere volume effect only
+                // Cover entire canvas including edges
                 const lineSpacing = 4;
-                for (let y = 0; y < canvas.height; y += lineSpacing) {
+                const padding = 50; // Extra padding to ensure coverage
+                
+                for (let y = -padding; y < canvas.height + padding; y += lineSpacing) {
                     ctx.beginPath();
                     let pathStarted = false;
                     
-                    for (let x = 0; x < canvas.width; x += 1) {
+                    // Start from well before left edge to ensure coverage
+                    for (let x = -padding; x < canvas.width + padding; x += 1) {
                         let sphereDisplacement = 0;
                         
                         // Calculate displacement from all bodies - only sphere volume effect
@@ -376,11 +380,14 @@
                         
                         const finalY = y + sphereDisplacement;
                         
-                        if (!pathStarted) {
-                            ctx.moveTo(x, finalY);
-                            pathStarted = true;
-                        } else {
-                            ctx.lineTo(x, finalY);
+                        // Only draw if within or near canvas bounds
+                        if (finalY >= -padding && finalY <= canvas.height + padding) {
+                            if (!pathStarted) {
+                                ctx.moveTo(x, finalY);
+                                pathStarted = true;
+                            } else {
+                                ctx.lineTo(x, finalY);
+                            }
                         }
                     }
                     
