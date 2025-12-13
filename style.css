@@ -155,7 +155,7 @@ h1, h2, h3, h4 {
 /* === HEADER === */
 header {
     padding: 32px 0; 
-    margin-bottom: 80px; 
+    margin-bottom: 0; 
     display: flex; 
     justify-content: space-between; 
     align-items: center;
@@ -246,7 +246,7 @@ body.modal-open .cursor-dot {
 
 /* Hero Section */
 .hero { 
-    padding: 80px 0 120px; 
+    padding: 0 0 120px; 
     position: relative;
     overflow: visible;
     min-height: auto;
@@ -311,6 +311,7 @@ body.modal-open .cursor-dot {
     align-items: flex-start;
     gap: 48.01px;
     width: 100%;
+    padding-top: 80px;
 }
 
 .hero-mesh-container {
@@ -361,6 +362,7 @@ body.modal-open .cursor-dot {
     font-family: var(--font-display);
     font-weight: 300;
     line-height: 34px;
+    letter-spacing: -2.16px;
     word-wrap: normal;
     overflow-wrap: normal;
     hyphens: none;
@@ -374,6 +376,7 @@ body.modal-open .cursor-dot {
     font-style: italic;
     font-weight: 400;
     line-height: 34px;
+    letter-spacing: -2.16px;
     word-wrap: normal;
     overflow-wrap: normal;
     hyphens: none;
@@ -386,6 +389,7 @@ body.modal-open .cursor-dot {
     font-family: var(--font-display);
     font-weight: 400;
     line-height: 34px;
+    letter-spacing: -2.16px;
     word-wrap: normal;
     overflow-wrap: normal;
     hyphens: none;
@@ -400,6 +404,7 @@ body.modal-open .cursor-dot {
     align-items: flex-start;
     gap: 24px;
     width: 100%;
+    border-top: none;
 }
 
 .meta-block {
@@ -422,6 +427,7 @@ body.modal-open .cursor-dot {
     line-height: 17.60px;
     letter-spacing: 1.65px;
     word-wrap: break-word;
+    margin-bottom: 7.20px;
 }
 
 .meta-value {
