@@ -364,13 +364,11 @@
                             
                             if (distance < body.radius) {
                                 const normalizedDist = distance / body.radius;
-                                // Use smoother falloff to reduce halo effect
-                                const heightFactor = Math.pow(1 - normalizedDist, 2); // Quadratic falloff instead of sqrt
-                                const lift = heightFactor * body.radius * 0.6; // Reduced from 0.8
-                                // Apply displacement perpendicular to the line from body center
-                                const angle = Math.atan2(dy, dx);
-                                finalX += Math.cos(angle) * lift * 0.3; // Small X displacement
-                                finalY -= lift; // Main Y displacement
+                                // Restore spherical shape with sqrt formula
+                                const heightFactor = Math.sqrt(1 - normalizedDist * normalizedDist);
+                                const lift = heightFactor * body.radius * 0.8;
+                                // Only displace in Y to maintain spherical shape
+                                finalY -= lift;
                             }
                         });
                         
@@ -389,29 +387,19 @@
                 for (let y = -drawExtension; y < canvas.height + drawExtension; y += pixelGridSpacing) {
                     ctx.beginPath();
                     let pathStarted = false;
-                    let lastX = -Infinity;
-                    let lastY = -Infinity;
                     
                     for (let x = -drawExtension; x < canvas.width + drawExtension; x += pixelGridSpacing) {
                         if (gridPoints[x] && gridPoints[x][y] && gridPoints[x + pixelGridSpacing] && gridPoints[x + pixelGridSpacing][y]) {
                             const point1 = gridPoints[x][y];
                             const point2 = gridPoints[x + pixelGridSpacing][y];
                             
-                            // Skip drawing if the jump is too large (to avoid halo artifacts)
-                            if (pathStarted && Math.abs(point1.x - lastX) > pixelGridSpacing * 2) {
-                                ctx.stroke();
-                                pathStarted = false;
-                            }
-                            
                             if (!pathStarted) {
                                 ctx.moveTo(point1.x, point1.y);
                                 pathStarted = true;
                             }
                             ctx.lineTo(point2.x, point2.y);
-                            lastX = point2.x;
-                            lastY = point2.y;
                         } else if (pathStarted) {
-                            // Break the path if there's a gap
+                            // Break the path if there's a gap (this helps reduce halo artifacts)
                             ctx.stroke();
                             pathStarted = false;
                         }
