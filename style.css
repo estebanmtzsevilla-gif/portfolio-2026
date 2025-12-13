@@ -314,7 +314,6 @@ body.modal-open .cursor-dot {
 }
 
 .hero-mesh-container {
-    height: 500px;
     background: white;
     outline: 2px #B2F055 solid;
     outline-offset: -2px;
@@ -324,6 +323,8 @@ body.modal-open .cursor-dot {
     position: relative;
     /* Use 6 columns out of 8, aligned to the right */
     width: calc((100% / 8) * 6); /* 6/8 = 75% of available width */
+    /* Maintain 16:9 aspect ratio */
+    aspect-ratio: 16 / 9;
     margin-left: auto; /* Push to the right */
 }
 
@@ -347,9 +348,12 @@ body.modal-open .cursor-dot {
 
 .hero-text-block {
     width: 100%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+    display: block;
+    line-height: 34px;
+}
+
+.hero-text-block span {
+    display: inline;
 }
 
 .hero-text-normal {
