@@ -327,7 +327,7 @@
                 })
             ];
             
-            const pixelGridSpacing = 4; // Slightly increased for better performance
+            const pixelGridSpacing = 3; // Dense mesh
             const lineWidth = 2;
             
             function drawDisplacedPixelGrid() {
@@ -379,57 +379,64 @@
                     }
                 }
                 
-                ctx.lineWidth = lineWidth;
-                ctx.strokeStyle = 'rgba(16, 55, 246, 0.4)';
-                ctx.setLineDash([3, 3]); // Dotted pattern
+                ctx.fillStyle = 'rgba(16, 55, 246, 0.4)';
                 
                 const drawExtension = 250;
-                // Draw dotted mesh with aggressive halo prevention
-                for (let y = -drawExtension; y < canvas.height + drawExtension; y += pixelGridSpacing) {
-                    ctx.beginPath();
-                    let pathStarted = false;
-                    let lastY = null;
-                    
-                    for (let x = -drawExtension; x < canvas.width + drawExtension; x += pixelGridSpacing) {
+                // Optimized: Only draw points within visible canvas area
+                const minX = Math.max(-drawExtension, 0);
+                const maxX = Math.min(canvas.width + drawExtension, canvas.width);
+                const minY = Math.max(-drawExtension, 0);
+                const maxY = Math.min(canvas.height + drawExtension, canvas.height);
+                
+                // Batch draw points for better performance
+                ctx.beginPath();
+                let pointCount = 0;
+                const maxPointsPerBatch = 500; // Draw in batches to avoid performance issues
+                
+                for (let y = minY; y < maxY; y += pixelGridSpacing) {
+                    for (let x = minX; x < maxX; x += pixelGridSpacing) {
+                        if (gridPoints[x] && gridPoints[x][y]) {
+                            const point = gridPoints[x][y];
+                            
+                            // Add point to current batch
+                            ctx.arc(point.x, point.y, 0.8, 0, Math.PI * 2);
+                            pointCount++;
+                            
+                            // Flush batch if it gets too large
+                            if (pointCount >= maxPointsPerBatch) {
+                                ctx.fill();
+                                ctx.beginPath();
+                                pointCount = 0;
+                            }
+                        }
+                    }
+                }
+                
+                // Draw remaining points
+                if (pointCount > 0) {
+                    ctx.fill();
+                }
+                
+                // Draw short connecting lines only between nearby points (optimized)
+                ctx.strokeStyle = 'rgba(16, 55, 246, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 4]);
+                
+                for (let y = minY; y < maxY; y += pixelGridSpacing) {
+                    for (let x = minX; x < maxX - pixelGridSpacing; x += pixelGridSpacing) {
                         if (gridPoints[x] && gridPoints[x][y] && gridPoints[x + pixelGridSpacing] && gridPoints[x + pixelGridSpacing][y]) {
                             const point1 = gridPoints[x][y];
                             const point2 = gridPoints[x + pixelGridSpacing][y];
                             
-                            // More aggressive check: compare Y displacement to detect if crossing planet boundary
+                            // Only draw line if displacement is very small
                             const yDiff = Math.abs(point1.y - point2.y);
-                            const xDiff = Math.abs(point1.x - point2.x);
-                            
-                            // Also check if there's a sudden jump from last point's Y position
-                            const shouldBreak = lastY !== null && Math.abs(point1.y - lastY) > pixelGridSpacing * 0.8;
-                            
-                            // Only connect if displacement is minimal and no sudden jumps
-                            if (yDiff < pixelGridSpacing * 0.8 && xDiff < pixelGridSpacing * 1.2 && !shouldBreak) {
-                                if (!pathStarted) {
-                                    ctx.moveTo(point1.x, point1.y);
-                                    pathStarted = true;
-                                }
+                            if (yDiff < pixelGridSpacing * 0.5) {
+                                ctx.beginPath();
+                                ctx.moveTo(point1.x, point1.y);
                                 ctx.lineTo(point2.x, point2.y);
-                                lastY = point2.y;
-                            } else {
-                                // Break the path aggressively if any condition fails
-                                if (pathStarted) {
-                                    ctx.stroke();
-                                    pathStarted = false;
-                                }
-                                lastY = null;
-                            }
-                        } else {
-                            // Break path on gaps
-                            if (pathStarted) {
                                 ctx.stroke();
-                                pathStarted = false;
                             }
-                            lastY = null;
                         }
-                    }
-                    
-                    if (pathStarted) {
-                        ctx.stroke();
                     }
                 }
                 
