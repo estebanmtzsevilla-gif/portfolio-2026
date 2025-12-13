@@ -40,19 +40,8 @@
         }
         body.hovering .cursor-dot { width: 80px; height: 80px; background-color: #B2F055; mix-blend-mode: multiply; }
 
-        /* --- SOLAR CANVAS --- */
-        .solar-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            background: transparent;
-        }
-
-        /* CSS antiguo del sistema solar eliminado - ahora usamos canvas */
+        /* --- PLANETARY CANVAS --- */
+        /* Styles moved to style.css */
     </style>
 </head>
 <body class="loading">
@@ -73,22 +62,32 @@
         </header>
 
         <section class="hero">
-            <canvas id="solarCanvas" class="solar-canvas"></canvas>
-
-            <div class="hero-content">
-                <h1>
-                    I see design as <span class="highlight-lora">purposeful creativity,</span> 
-                    a powerful force that can refine everyday life or revolutionize entire industries.
-                </h1>
+            <div class="hero-wrapper">
+                <div class="hero-mesh-container">
+                    <canvas id="planetary-canvas"></canvas>
+                </div>
+                
+                <div class="hero-text-container">
+                    <div class="hero-text-block">
+                        <span class="hero-text-normal">I see design as </span>
+                        <span class="hero-text-highlight">purposeful creativity,</span>
+                        <span class="hero-text-normal"> </span>
+                        <span class="hero-text-normal">a powerful force that can refine everyday life or revolutionize entire industries.</span>
+                    </div>
+                    <div class="hero-text-block">
+                        <span class="hero-text-bold">I focus on helping designers and design teams </span>
+                        <span class="hero-text-bold">deliver on that promise.</span>
+                    </div>
+                </div>
                 
                 <div class="hero-meta">
                     <div class="meta-block">
-                        <span class="mono">FOCUS</span>
-                        <div class="mono meta-value">Strategic design & Innovation</div>
+                        <div class="meta-label">Experienced in</div>
+                        <div class="meta-value">Strategic design, Design ops & Innovation</div>
                     </div>
                     <div class="meta-block">
-                        <span class="mono">LOCATION</span>
-                        <div class="mono meta-value">Mexico City</div>
+                        <div class="meta-label">LOCATION</div>
+                        <div class="meta-value">Mexico City</div>
                     </div>
                 </div>
             </div>
@@ -210,30 +209,43 @@
             el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
         });
 
-        // SOLAR SYSTEM CINEMATIC CANVAS
-        const canvas = document.getElementById('solarCanvas');
+        // PLANETARY SYSTEM MESH CANVAS
+        const canvas = document.getElementById('planetary-canvas');
         if (canvas) {
             const ctx = canvas.getContext('2d');
             
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            // Set canvas to fit container
+            const container = canvas.parentElement;
+            // Canvas should fill the container's content area (accounting for padding)
+            // The container has padding: 233px 271px, so we need to calculate the inner size
+            const computedStyle = window.getComputedStyle(container);
+            const paddingLeft = parseFloat(computedStyle.paddingLeft) || 271;
+            const paddingRight = parseFloat(computedStyle.paddingRight) || 271;
+            const paddingTop = parseFloat(computedStyle.paddingTop) || 233;
+            const paddingBottom = parseFloat(computedStyle.paddingBottom) || 233;
+            
+            canvas.width = container.offsetWidth - paddingLeft - paddingRight;
+            canvas.height = container.offsetHeight - paddingTop - paddingBottom;
             
             let time = 0;
             let speedMultiplier = 1.0;
             let zoomLevel = 1.0;
             
-            // Planet class with 3D lighting effect
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // Planet class
             class Planet {
-                constructor(config) {
-                    this.baseX = config.x;
-                    this.baseY = config.y;
-                    this.radius = config.radius;
-                    this.color = config.color;
-                    this.glowColor = config.glowColor;
-                    this.orbitRadius = config.orbitRadius || 0;
-                    this.orbitSpeed = config.orbitSpeed || 0;
-                    this.orbitPhase = config.orbitPhase || 0;
-                    this.isSun = config.isSun || false;
+                constructor(options) {
+                    this.baseX = options.x;
+                    this.baseY = options.y;
+                    this.radius = options.radius;
+                    this.color = options.color;
+                    this.glowColor = options.glowColor;
+                    this.orbitRadius = options.orbitRadius || 0;
+                    this.orbitSpeed = options.orbitSpeed || 0;
+                    this.orbitPhase = options.orbitPhase || 0;
+                    this.isSun = options.isSun || false;
                 }
                 
                 getPosition() {
@@ -243,23 +255,18 @@
                     
                     const angle = time * this.orbitSpeed * speedMultiplier + this.orbitPhase;
                     
-                    // Calculate position on the ellipse
                     const ellipseX = Math.cos(angle) * this.orbitRadius * zoomLevel;
-                    const ellipseY = Math.sin(angle) * this.orbitRadius * 0.3 * zoomLevel;
+                    const ellipseY = Math.sin(angle) * this.orbitRadius * 0.7 * zoomLevel;
                     
-                    // Apply rotation to create diagonal perspective (~-25.7 degrees, inverted)
                     const rotationAngle = -Math.PI / 7;
                     const cos = Math.cos(rotationAngle);
                     const sin = Math.sin(rotationAngle);
                     
-                    // Rotate the ellipse coordinates
                     const rotatedX = ellipseX * cos - ellipseY * sin;
                     const rotatedY = ellipseX * sin + ellipseY * cos;
                     
                     const x = this.baseX + rotatedX;
                     const y = this.baseY + rotatedY;
-                    
-                    // Calculate Z depth for occlusion
                     const z = Math.sin(angle) * this.orbitRadius;
                     
                     return { x, y, z };
@@ -270,43 +277,18 @@
                     const scaledRadius = this.radius * zoomLevel;
                     
                     if (this.isSun) {
-                        // Sun halo/glow
-                        const glowGradient = ctx.createRadialGradient(
-                            pos.x, pos.y, scaledRadius,
-                            pos.x, pos.y, scaledRadius * 2.5
-                        );
-                        glowGradient.addColorStop(0, 'rgba(178, 240, 85, 0.4)');
-                        glowGradient.addColorStop(1, 'rgba(178, 240, 85, 0)');
-                        
-                        ctx.fillStyle = glowGradient;
-                        ctx.beginPath();
-                        ctx.arc(pos.x, pos.y, scaledRadius * 2.5, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Sun body - solid lime
-                        ctx.fillStyle = '#B2F055';
-                        ctx.beginPath();
-                        ctx.arc(pos.x, pos.y, scaledRadius, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else {
-                        // Planet - simple flat gray circle
-                        ctx.fillStyle = this.color;
-                        ctx.beginPath();
-                        ctx.arc(pos.x, pos.y, scaledRadius, 0, Math.PI * 2);
-                        ctx.fill();
+                        // Sun completely removed - no circle, no glow, only mesh deformation reveals it
+                        // This keeps the background clean white
                     }
                 }
             }
             
-            // Create celestial bodies - positioned to the right
-            const centerX = canvas.width * 0.72;
-            const centerY = canvas.height / 2;
-            
             const sun = new Planet({
                 x: centerX,
                 y: centerY,
-                radius: 80,
-                color: '#B2F055',
+                radius: 120,
+                color: '#4A4A4A',
+                glowColor: 'rgba(74, 74, 74, 0.6)',
                 isSun: true
             });
             
@@ -315,121 +297,175 @@
                     x: centerX,
                     y: centerY,
                     radius: 45,
-                    color: '#555555',
-                    glowColor: 'rgba(85, 85, 85, 1)',
-                    orbitRadius: 150,
-                    orbitSpeed: 0.002, // Aumentado de 0.0003
+                    color: '#FFFFFF',
+                    glowColor: 'rgba(255, 255, 255, 1)',
+                    orbitRadius: 200,
+                    orbitSpeed: 0.0008,
                     orbitPhase: Math.PI
                 }),
                 new Planet({
                     x: centerX,
                     y: centerY,
                     radius: 35,
-                    color: '#555555',
-                    glowColor: 'rgba(85, 85, 85, 1)',
-                    orbitRadius: 240,
-                    orbitSpeed: 0.0015, // Aumentado de 0.0005
+                    color: '#FFFFFF',
+                    glowColor: 'rgba(255, 255, 255, 1)',
+                    orbitRadius: 330,
+                    orbitSpeed: 0.0005,
                     orbitPhase: 0
                 }),
                 new Planet({
                     x: centerX,
                     y: centerY,
                     radius: 25,
-                    color: '#555555',
-                    glowColor: 'rgba(85, 85, 85, 1)',
-                    orbitRadius: 340,
-                    orbitSpeed: 0.001, // Aumentado de 0.0007
+                    color: '#FFFFFF',
+                    glowColor: 'rgba(255, 255, 255, 1)',
+                    orbitRadius: 460,
+                    orbitSpeed: 0.00035,
                     orbitPhase: Math.PI * 0.7
                 }),
                 new Planet({
                     x: centerX,
                     y: centerY,
                     radius: 55,
-                    color: '#555555',
-                    glowColor: 'rgba(85, 85, 85, 1)',
-                    orbitRadius: 450,
-                    orbitSpeed: 0.0008, // Aumentado de 0.0002
+                    color: '#FFFFFF',
+                    glowColor: 'rgba(255, 255, 255, 1)',
+                    orbitRadius: 600,
+                    orbitSpeed: 0.00025,
                     orbitPhase: Math.PI * 1.5
                 })
             ];
             
-            // Function to draw all orbits with rotation
-            function drawOrbits() {
+            const pixelGridSpacing = 5;
+            const lineWidth = 2;
+            
+            function drawDisplacedPixelGrid() {
                 ctx.save();
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.12)';
-                ctx.lineWidth = 1;
                 
-                // Rotation angle for diagonal perspective (about -25 degrees, inverted)
-                const rotationAngle = -Math.PI / 7; // ~-25.7 degrees
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.rotate(Math.PI / 12);
+                ctx.translate(-canvas.width / 2, -canvas.height / 2);
                 
-                planets.forEach(planet => {
-                    if (planet.orbitRadius > 0) {
-                        ctx.beginPath();
-                        ctx.ellipse(
-                            centerX, 
-                            centerY, 
-                            planet.orbitRadius * zoomLevel, 
-                            planet.orbitRadius * 0.3 * zoomLevel,
-                            rotationAngle, // Rotation to create diagonal effect
-                            0, 
-                            Math.PI * 2
-                        );
+                const sunPos = sun.getPosition();
+                const planetPositions = planets.map(p => ({
+                    ...p.getPosition(),
+                    radius: p.radius * zoomLevel
+                }));
+                
+                const allBodies = [
+                    { x: sunPos.x, y: sunPos.y, radius: sun.radius * zoomLevel },
+                    ...planetPositions
+                ];
+                
+                const gridExtension = 250;
+                const gridPoints = [];
+                for (let x = -gridExtension; x < canvas.width + gridExtension; x += pixelGridSpacing) {
+                    gridPoints[x] = [];
+                    for (let y = -gridExtension; y < canvas.height + gridExtension; y += pixelGridSpacing) {
+                        let finalX = x;
+                        let finalY = y;
+                        
+                        allBodies.forEach(body => {
+                            const dx = x - body.x;
+                            const dy = y - body.y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < body.radius) {
+                                const normalizedDist = distance / body.radius;
+                                const heightFactor = Math.sqrt(1 - normalizedDist * normalizedDist);
+                                const lift = heightFactor * body.radius * 0.8;
+                                finalY -= lift;
+                            }
+                        });
+                        
+                        gridPoints[x][y] = {
+                            x: finalX,
+                            y: finalY
+                        };
+                    }
+                }
+                
+                ctx.lineWidth = lineWidth;
+                ctx.strokeStyle = 'rgba(16, 55, 246, 0.4)';
+                ctx.setLineDash([4, 2]);
+                
+                const drawExtension = 250;
+                for (let y = -drawExtension; y < canvas.height + drawExtension; y += pixelGridSpacing) {
+                    ctx.beginPath();
+                    let pathStarted = false;
+                    
+                    for (let x = -drawExtension; x < canvas.width + drawExtension; x += pixelGridSpacing) {
+                        if (gridPoints[x] && gridPoints[x][y] && gridPoints[x + pixelGridSpacing] && gridPoints[x + pixelGridSpacing][y]) {
+                            const point1 = gridPoints[x][y];
+                            const point2 = gridPoints[x + pixelGridSpacing][y];
+                            
+                            if (!pathStarted) {
+                                ctx.moveTo(point1.x, point1.y);
+                                pathStarted = true;
+                            }
+                            ctx.lineTo(point2.x, point2.y);
+                        }
+                    }
+                    
+                    if (pathStarted) {
                         ctx.stroke();
                     }
-                });
+                }
                 
+                ctx.setLineDash([]);
                 ctx.restore();
             }
             
+            function drawOrbits() {
+            }
+            
             function animate() {
-                // Clear canvas with transparent background
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                // Draw orbits FIRST (always in background)
                 drawOrbits();
                 
-                // Get sun position
                 const sunPos = sun.getPosition();
                 
-                // Create array of all objects with their Z positions
                 const allObjects = [
-                    { type: 'sun', obj: sun, z: 0 }, // Sun is always at z=0
-                    ...planets.map(planet => ({
-                        type: 'planet',
-                        obj: planet,
-                        z: planet.getPosition().z
-                    }))
+                    { obj: sun, pos: sunPos },
+                    ...planets.map(p => ({ obj: p, pos: p.getPosition() }))
                 ];
                 
-                // Sort by Z depth (furthest to nearest - negative Z to positive Z)
-                allObjects.sort((a, b) => a.z - b.z);
+                allObjects.sort((a, b) => a.pos.z - b.pos.z);
                 
-                // Draw all objects in order
-                allObjects.forEach(item => {
-                    if (item.type === 'sun') {
-                        item.obj.draw(sunPos);
-                    } else {
-                        item.obj.draw(sunPos);
-                    }
+                drawDisplacedPixelGrid();
+                
+                allObjects.forEach(({ obj, pos }) => {
+                    obj.draw(sunPos);
                 });
                 
-                time += 2; // Incremento aumentado para animación más rápida
+                time += 16;
                 requestAnimationFrame(animate);
             }
             
-            // Handle resize
+            // Handle window resize
+            let resizeTimeout;
             window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                // Recalculate center position
-                const centerX = canvas.width * 0.72;
-                const centerY = canvas.height / 2;
-                sun.baseX = centerX;
-                sun.baseY = centerY;
-                planets.forEach(planet => {
-                    planet.baseX = centerX;
-                    planet.baseY = centerY;
-                });
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    const container = canvas.parentElement;
+                    const computedStyle = window.getComputedStyle(container);
+                    const paddingLeft = parseFloat(computedStyle.paddingLeft) || 271;
+                    const paddingRight = parseFloat(computedStyle.paddingRight) || 271;
+                    const paddingTop = parseFloat(computedStyle.paddingTop) || 233;
+                    const paddingBottom = parseFloat(computedStyle.paddingBottom) || 233;
+                    
+                    canvas.width = container.offsetWidth - paddingLeft - paddingRight;
+                    canvas.height = container.offsetHeight - paddingTop - paddingBottom;
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    sun.baseX = centerX;
+                    sun.baseY = centerY;
+                    planets.forEach(planet => {
+                        planet.baseX = centerX;
+                        planet.baseY = centerY;
+                    });
+                }, 250);
             });
             
             animate();
