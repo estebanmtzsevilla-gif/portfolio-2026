@@ -129,7 +129,7 @@ h1, h2, h3, h4 {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 0;
-    column-gap: 0;
+    column-gap: 24px;
 }
 
 /* Content wrapper for 8 central columns (columns 3-10) */
