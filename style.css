@@ -5,7 +5,7 @@
 /* === ROOT VARIABLES === */
 :root {
     /* Color Palette */
-    --bg: #F2F2F2;
+    --bg: #F0F0F0;
     --surface: #FFFFFF;
     --ink: #111111;
     --gray: #666666;
@@ -398,7 +398,7 @@ body.modal-open .cursor-dot {
 
 section.hero .hero-meta {
     align-self: stretch;
-    padding-top: 24px;
+    padding-top: 16px;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
