@@ -348,14 +348,14 @@
                 
                 // Wave parameters
                 const waveSpacing = 8; // Distance between wave lines
-                const waveAmplitude = 3; // Height of waves
-                const numWaves = 15; // Number of wave rings per body
+                const waveAmplitude = 2; // Height of waves
+                const numWaves = 12; // Number of wave rings per body
                 
                 ctx.strokeStyle = 'rgba(16, 55, 246, 0.4)';
                 ctx.lineWidth = 1;
                 ctx.setLineDash([2, 3]);
                 
-                // Draw horizontal wave lines
+                // Draw horizontal wave lines with sphere volume effect
                 const lineSpacing = 4;
                 for (let y = 0; y < canvas.height; y += lineSpacing) {
                     ctx.beginPath();
@@ -363,14 +363,23 @@
                     
                     for (let x = 0; x < canvas.width; x += 1) {
                         let waveHeight = 0;
+                        let sphereDisplacement = 0;
                         
-                        // Calculate wave displacement from all bodies
+                        // Calculate displacement from all bodies
                         allBodies.forEach(body => {
                             const dx = x - body.x;
                             const dy = y - body.y;
                             const distance = Math.sqrt(dx * dx + dy * dy);
                             
-                            // Create circular waves around each body
+                            // SPHERE VOLUME EFFECT - Lift lines up when inside sphere
+                            if (distance < body.radius) {
+                                const normalizedDist = distance / body.radius;
+                                const heightFactor = Math.sqrt(1 - normalizedDist * normalizedDist);
+                                const lift = heightFactor * body.radius * 0.8;
+                                sphereDisplacement -= lift; // Lift up (negative Y)
+                            }
+                            
+                            // WAVE EFFECT - Circular waves outside sphere
                             if (distance > body.radius && distance < body.radius + numWaves * waveSpacing) {
                                 const waveDistance = distance - body.radius;
                                 const wavePhase = (waveDistance / waveSpacing) + (time * 0.001);
@@ -381,7 +390,7 @@
                             }
                         });
                         
-                        const finalY = y + waveHeight;
+                        const finalY = y + sphereDisplacement + waveHeight;
                         
                         if (!pathStarted) {
                             ctx.moveTo(x, finalY);
